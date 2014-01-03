@@ -180,6 +180,8 @@ var Game = function() {
         v(0,0)
     ];
     this.borderImage = document.getElementById('borderImage');
+    this.groundImage = document.getElementById('groundImage');
+    this.groundPattern = this.ctx.createPattern(this.groundImage, 'repeat');
 
     for (var x=0; x<10000; x+=40) {
         var y = 0;
@@ -226,6 +228,19 @@ Game.prototype.draw = function() {
     var ctx = self.ctx;
     var scale = self.scale;
     var point2canvas = self.point2canvas;
+
+    ctx.save();
+    ctx.fillStyle = self.groundPattern;
+    ctx.beginPath();
+
+    ctx.moveTo(point2canvas(self.terrainVerts[0]).x, 500);
+    for (var i=0; i<self.terrainVerts.length; i++) {
+        var p = point2canvas(self.terrainVerts[i]);
+        ctx.lineTo(p.x, p.y);
+    }
+    ctx.lineTo(point2canvas(self.terrainVerts[self.terrainVerts.length - 1]).x, 500);
+    ctx.fill();
+    ctx.restore();
 
     ctx.save();
     for (var i=0; i<(this.terrainVerts.length - 1); i++) {
