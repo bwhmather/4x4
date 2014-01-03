@@ -236,7 +236,7 @@ Game.prototype.draw = function() {
     ctx.moveTo(point2canvas(self.terrainVerts[0]).x, 500);
     for (var i=0; i<self.terrainVerts.length; i++) {
         var p = point2canvas(self.terrainVerts[i]);
-        ctx.lineTo(p.x, p.y);
+        ctx.lineTo(p.x, p.y + 2);
     }
     ctx.lineTo(point2canvas(self.terrainVerts[self.terrainVerts.length - 1]).x, 500);
     ctx.fill();
