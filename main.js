@@ -180,6 +180,7 @@ var Game = function() {
         v(0,0)
     ];
     this.borderImage = document.getElementById('borderImage');
+    this.borderPattern = this.ctx.createPattern(this.borderImage, 'repeat');
     this.groundImage = document.getElementById('groundImage');
     this.groundPattern = this.ctx.createPattern(this.groundImage, 'repeat');
 
@@ -242,40 +243,21 @@ Game.prototype.draw = function() {
     ctx.fill();
     ctx.restore();
 
-    ctx.save();
+    ctx.fillStyle = self.borderPattern;
     for (var i=0; i<(this.terrainVerts.length - 1); i++) {
-        var a = self.terrainVerts[i]; var b = self.terrainVerts[i+1];
-        var origin = point2canvas(v(0,0));
+        ctx.save();
+        var a = point2canvas( self.terrainVerts[i]);
+        var b = point2canvas(self.terrainVerts[i+1]);
+
+        var gradient = (b.y - a.y) / (b.x - a.x);
 
         // TODO it seems unlikely that this is the most efficient way to use the gpu
-        ctx.setTransform(1, (b.y - a.y) / (a.x - b.x), 0, 1, scale*a.x + origin.x, -scale*a.y + origin.y);
+        // skew in the y direction by the gradient of the line with
+        ctx.transform(1, gradient, 0, 1, 0, a.y - a.x * gradient);
+        ctx.fillRect(a.x, 0, b.x - a.x, 16);
 
-        // XXX assumes that all segments are less than 256 in length
-        var start = (a.x*scale) % 256;
-        var finish = (b.x*scale) % 256;
-
-        if (finish <= start) {
-            ctx.drawImage(self.borderImage,
-                          start, 0,
-                          256 - start, 16,
-                          0, -1,
-                          256 - start, 16);
-            if (finish) {
-                ctx.drawImage(self.borderImage,
-                              0, 0,
-                              finish, 16,
-                              256 - start, -1,
-                              finish, 16);
-            }
-        } else {
-            ctx.drawImage(self.borderImage,
-                          start, 0,
-                          finish - start, 16,
-                          0, -1,
-                          (finish - start), 16);
-        }
+        ctx.restore();
     }
-    ctx.restore();
 }
 
 var pu = new Game();
