@@ -258,20 +258,20 @@ Game.prototype.draw = function() {
             ctx.drawImage(self.borderImage,
                           start, 0,
                           256 - start, 16,
-                          0, 0,
+                          0, -1,
                           256 - start, 16);
             if (finish) {
                 ctx.drawImage(self.borderImage,
                               0, 0,
                               finish, 16,
-                              256 - start, 0,
+                              256 - start, -1,
                               finish, 16);
             }
         } else {
             ctx.drawImage(self.borderImage,
                           start, 0,
                           finish - start, 16,
-                          0, 0,
+                          0, -1,
                           (finish - start), 16);
         }
     }
