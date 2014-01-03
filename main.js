@@ -23,8 +23,8 @@ var data = {
         "dtheta": 10 * Math.PI
     },
     "front_suspension": {
-        "stiffness": 80,
-        "damping": 20,
+        "stiffness": 100,
+        "damping": 10,
         "spring_anchor": v(-30, 10),
         "spring_length": 35,
         "arm_anchor": v(0, -10)
@@ -38,8 +38,8 @@ var data = {
         "dtheta": 10 * Math.PI
     },
     "back_suspension": {
-        "stiffness": 80,
-        "damping": 20,
+        "stiffness": 100,
+        "damping": 10,
         "spring_anchor": v(30, 10),
         "spring_length": 35,
         "arm_anchor": v(0, -10)
@@ -128,6 +128,10 @@ var Pickup = function(space, spec, offset) {
     this.backMotor = new cp.SimpleMotor(this.chassis, this.backWheel, 0);
     this.backMotor.maxForce = 0;
     space.addConstraint(this.backMotor);
+
+    this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);
+    this.differential.maxForce = 10000; /* min(front_motor_torque, back_motor_torque) */
+    space.addConstraint(this.differential);
 }
 
 Pickup.prototype.setThrottle = function(throttle) {
@@ -258,6 +262,9 @@ Game.prototype.draw = function() {
         }
     }
     ctx.restore();
+
+
+
 }
 
 var pu = new Game();
