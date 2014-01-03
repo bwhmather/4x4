@@ -234,7 +234,6 @@ Game.prototype.draw = function() {
 
         // TODO it seems unlikely that this is the most efficient way to use the gpu
         ctx.setTransform(1, (b.y - a.y) / (a.x - b.x), 0, 1, scale*a.x + origin.x, -scale*a.y + origin.y);
-        ctx.scale(scale, -scale);
 
         // XXX assumes that all segments are less than 256 in length
         var start = (a.x*scale) % 256;
@@ -243,28 +242,25 @@ Game.prototype.draw = function() {
         if (finish <= start) {
             ctx.drawImage(self.borderImage,
                           start, 0,
-                          (256 - start), 16,
+                          256 - start, 16,
                           0, 0,
-                          (256 - start) / scale, -16 / scale);
+                          256 - start, 16);
             if (finish) {
                 ctx.drawImage(self.borderImage,
                               0, 0,
                               finish, 16,
-                              (256 - start) / scale, 0,
-                              finish / scale, -16 / scale);
+                              256 - start, 0,
+                              finish, 16);
             }
         } else {
             ctx.drawImage(self.borderImage,
                           start, 0,
                           finish - start, 16,
                           0, 0,
-                          (finish - start) / scale, -16 / scale);
+                          (finish - start), 16);
         }
     }
     ctx.restore();
-
-
-
 }
 
 var pu = new Game();
