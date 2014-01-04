@@ -129,6 +129,7 @@ var Pickup = function(space, spec, offset) {
     this.backMotor.maxForce = 0;
     space.addConstraint(this.backMotor);
 
+    // TODO make this work for different sized wheels
     this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);
     this.differential.maxForce = 10000; /* min(front_motor_torque, back_motor_torque) */
     space.addConstraint(this.differential);
@@ -166,7 +167,7 @@ var Game = function() {
 
     var boxOffset = v(100,100);
 
-    var pickup = new Pickup(space, data, boxOffset);
+    var pickup = this.pickup = new Pickup(space, data, boxOffset);
 
     var components = [
         { f: 1/30, a: 10 },
@@ -199,27 +200,31 @@ var Game = function() {
         shape.setFriction(0.9);
     }
 
+    this.onKeyDown = this.onKeyDown.bind(this);
+    document.addEventListener('keydown', this.onKeyDown);
 
-    document.onkeydown = function(e) {
-        if (e.keyCode === 39) {
-            pickup.setThrottle(1);
-            return false;
-        } else if (e.keyCode === 37) {
-            pickup.setThrottle(-1);
-            return false;
-        }
-    }
-
-    document.onkeyup = function(e) {
-        if (e.keyCode === 39 || e.keyCode === 37) {
-            pickup.setThrottle(0);
-            return false;
-        }
-    }
-
+    this.onKeyUp = this.onKeyUp.bind(this);
+    document.addEventListener('keyup', this.onKeyUp);
 };
 
 Game.prototype = Object.create(Demo.prototype);
+
+Game.prototype.onKeyDown = function(e) {
+    if (e.keyCode === 39) {
+        this.pickup.setThrottle(1);
+        return false;
+    } else if (e.keyCode === 37) {
+        this.pickup.setThrottle(-1);
+        return false;
+    }
+};
+
+Game.prototype.onKeyUp = function(e) {
+    if (e.keyCode === 39 || e.keyCode === 37) {
+        this.pickup.setThrottle(0);
+        return false;
+    }
+};
 
 Game.prototype.draw = function() {
     Demo.prototype.draw.call(this);
@@ -242,6 +247,7 @@ Game.prototype.draw = function() {
     ctx.lineTo(point2canvas(self.terrainVerts[self.terrainVerts.length - 1]).x, 500);
     ctx.fill();
     ctx.restore();
+
 
     ctx.fillStyle = self.borderPattern;
     for (var i=0; i<(this.terrainVerts.length - 1); i++) {
