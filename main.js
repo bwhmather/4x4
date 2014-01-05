@@ -4,14 +4,14 @@ var data = {
     "chassis": {
         "mass": 5,
         "width": 80,
-        "height": 25,
+        "height": 20,
 
         "cab": {
-            "bottom": 30, // length of bottom of cab
-            "lead": 10, // offset of start of top of cab from front of bottom
-            "top": 20, // length of top of cab
+            "bottom": 22, // length of bottom of cab
+            "lead": 8, // offset of start of top of cab from front of bottom
+            "top": 14, // length of top of cab
             "front": 25,
-            "height":20
+            "height":17
         }
     },
 
@@ -72,16 +72,20 @@ Wheel.prototype.draw = function(ctx, scale, point2canvas) {
     var c = point2canvas(this.p);
     var r = this.spec.radius;
 
+    console.log(scale);
     ctx.save();
     ctx.translate(c.x, c.y);
     ctx.rotate(-this.a);
-    ctx.drawImage(this.image, -0.5 * r, -0.5 * r, r, r);
+    ctx.scale(scale, scale);
+    ctx.drawImage(this.image, -r, -r, 2*r, 2*r);
     ctx.restore();
 
 };
 
 
 var Pickup = function(space, spec, offset) {
+    this.spec = spec;
+
     var makeChassis = function(space, spec) {
         var body = new cp.Body(
             spec.mass,
@@ -151,6 +155,8 @@ var Pickup = function(space, spec, offset) {
     this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);
     this.differential.maxForce = 10000; /* min(front_motor_torque, back_motor_torque) */
     space.addConstraint(this.differential);
+
+    this.bodyImage = document.getElementById('bodyImage');
 }
 
 Pickup.prototype.setThrottle = function(throttle) {
@@ -170,6 +176,19 @@ Pickup.prototype.setThrottle = function(throttle) {
 }
 
 Pickup.prototype.draw = function(ctx, scale, point2canvas) {
+    var spec = this.spec;
+
+    console.log(scale);
+    ctx.save();
+    var c = point2canvas(this.chassis.p);
+    ctx.translate(c.x, c.y);
+    ctx.rotate(-this.chassis.a);
+    ctx.scale(scale, scale);
+    ctx.drawImage(this.bodyImage,
+        -0.55*spec.chassis.width, -0.55*spec.chassis.height - 1.1*spec.chassis.cab.height,
+        1.1*spec.chassis.width, 1.1*(spec.chassis.height + spec.chassis.cab.height));
+    ctx.restore();
+
     this.frontWheel.draw(ctx, scale, point2canvas, this.frontWheel);
     this.backWheel.draw(ctx, scale, point2canvas, this.backWheel);
 }
@@ -177,7 +196,7 @@ Pickup.prototype.draw = function(ctx, scale, point2canvas) {
 var Game = function() {
     Demo.call(this);
 
-    this.scale = 0.5;
+    this.scale = 1;
     var space = this.space;
 
     space.iterations = 10;
@@ -263,12 +282,12 @@ Game.prototype.draw = function() {
     ctx.fillStyle = self.groundPattern;
     ctx.beginPath();
 
-    ctx.moveTo(point2canvas(self.terrainVerts[0]).x, 500);
+    ctx.moveTo(0, ctx.canvas.height);
     for (var i=0; i<self.terrainVerts.length; i++) {
         var p = point2canvas(self.terrainVerts[i]);
         ctx.lineTo(p.x, p.y + 2);
     }
-    ctx.lineTo(point2canvas(self.terrainVerts[self.terrainVerts.length - 1]).x, 500);
+    ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
     ctx.fill();
     ctx.restore();
 
