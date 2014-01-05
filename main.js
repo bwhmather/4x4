@@ -18,9 +18,7 @@ var data = {
     "front_wheel": {
         "mass": 0.15,
         "radius": 13,
-        "friction": 1.2,
-        "torque": 200,
-        "dtheta": 5 * Math.PI
+        "friction": 1.2
     },
     "front_suspension": {
         "stiffness": 450,
@@ -29,13 +27,15 @@ var data = {
         "spring_length": 20,
         "arm_anchor": v(0, -10)
     },
+    "front_motor": {
+       "torque":7500,
+        "rate": 20 * Math.PI
+    },
 
     "back_wheel": {
         "mass": 0.15,
         "radius": 13,
-        "friction": 1.2,
-        "torque": 200,
-        "dtheta": 5 * Math.PI
+        "friction": 1.2
     },
     "back_suspension": {
         "stiffness": 450,
@@ -43,6 +43,14 @@ var data = {
         "spring_anchor": v(-30, 5),
         "spring_length": 20,
         "arm_anchor": v(0, -10)
+    },
+    "back_motor": {
+       "torque": 7500,
+        "rate": 20 * Math.PI
+    },
+
+    "differential": {
+        "torque": 7500
     }
 };
 
@@ -152,21 +160,20 @@ var Pickup = function(space, spec, offset) {
 
     // TODO make this work for different sized wheels
     this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);
-    this.differential.maxForce = 10000; /* min(front_motor_torque, back_motor_torque) */
+    this.differential.maxForce = spec.differential.torque;
     space.addConstraint(this.differential);
 
     this.bodyImage = document.getElementById('bodyImage');
 }
 
 Pickup.prototype.setThrottle = function(throttle) {
-    var dtheta = 20 * Math.PI;
-    var torque = 7500;
+    var spec = this.spec;
 
-    this.frontMotor.rate = (throttle < 0 ? -1 : 1) * dtheta;
-    this.frontMotor.maxForce = Math.abs(throttle) * torque;
+    this.frontMotor.rate = (throttle < 0 ? -1 : 1) * spec.front_motor.rate;
+    this.frontMotor.maxForce = Math.abs(throttle) * spec.front_motor.torque;
 
-    this.backMotor.rate = (throttle < 0 ? -1 : 1) * dtheta;
-    this.backMotor.maxForce = Math.abs(throttle) * torque;
+    this.backMotor.rate = (throttle < 0 ? -1 : 1) * spec.back_motor.rate;
+    this.backMotor.maxForce = Math.abs(throttle) * spec.back_motor.torque;
 
     if (throttle !== 0) {
         this.frontMotor.activateBodies();
