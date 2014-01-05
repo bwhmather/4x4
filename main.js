@@ -47,6 +47,40 @@ var data = {
 };
 
 
+var Wheel = function(space, spec) {
+    this.spec = spec;
+
+    cp.Body.call(
+        this,
+        spec.mass,
+        cp.momentForCircle(spec.mass, spec.radius, spec.radius, v(0,0))
+    );
+    space.addBody(this);
+
+    var shape = new cp.CircleShape(this, spec.radius, v(0,0));
+    shape.setElasticity(0);
+    shape.setFriction(spec.friction);
+    shape.group = 1;
+    space.addShape(shape);
+
+    this.image = document.getElementById('wheelImage');
+};
+
+Wheel.prototype = Object.create(cp.Body.prototype);
+
+Wheel.prototype.draw = function(ctx, scale, point2canvas) {
+    var c = point2canvas(this.p);
+    var r = this.spec.radius;
+
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    ctx.rotate(-this.a);
+    ctx.drawImage(this.image, -0.5 * r, -0.5 * r, r, r);
+    ctx.restore();
+
+};
+
+
 var Pickup = function(space, spec, offset) {
     var makeChassis = function(space, spec) {
         var body = new cp.Body(
@@ -77,22 +111,6 @@ var Pickup = function(space, spec, offset) {
         return body;
     };
 
-    var makeWheel = function(space, spec) {
-        var body = new cp.Body(
-            spec.mass,
-            cp.momentForCircle(spec.mass, spec.radius, spec.radius, v(0,0))
-        );
-        space.addBody(body);
-
-        var shape = new cp.CircleShape(body, spec.radius, v(0,0));
-        shape.setElasticity(0);
-        shape.setFriction(spec.friction);
-        shape.group = 1;
-        space.addShape(shape);
-
-        return body
-    };
-
     var makeSuspension = function(space, spec, chassis, wheel) {
         wheel.setPos(v(
             chassis.p.x + spec.spring_anchor.x,
@@ -115,10 +133,10 @@ var Pickup = function(space, spec, offset) {
     this.chassis = makeChassis(space, spec.chassis);
     this.chassis.setPos(offset);
 
-    this.frontWheel = makeWheel(space, spec.front_wheel);
+    this.frontWheel = new Wheel(space, spec.front_wheel);
     makeSuspension(space, spec.front_suspension, this.chassis, this.frontWheel);
 
-    this.backWheel = makeWheel(space, spec.back_wheel);
+    this.backWheel = new Wheel(space, spec.back_wheel);
     makeSuspension(space, spec.back_suspension, this.chassis, this.backWheel);
 
     this.frontMotor = new cp.SimpleMotor(this.chassis, this.frontWheel, 0);
@@ -151,6 +169,10 @@ Pickup.prototype.setThrottle = function(throttle) {
     }
 }
 
+Pickup.prototype.draw = function(ctx, scale, point2canvas) {
+    this.frontWheel.draw(ctx, scale, point2canvas, this.frontWheel);
+    this.backWheel.draw(ctx, scale, point2canvas, this.backWheel);
+}
 
 var Game = function() {
     Demo.call(this);
@@ -234,6 +256,8 @@ Game.prototype.draw = function() {
     var ctx = self.ctx;
     var scale = self.scale;
     var point2canvas = self.point2canvas;
+
+    self.pickup.draw(ctx, scale, point2canvas);
 
     ctx.save();
     ctx.fillStyle = self.groundPattern;
