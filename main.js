@@ -288,7 +288,7 @@ Game.prototype.draw = function() {
         return v(point.x * scale, (max - point.y) * scale);
     }
 
-    ctx.clearRect(0, 0, this.width, this.height);
+    ctx.clearRect(0, 0, width, height);
 
     self.pickup.draw(ctx, scale, point2canvas);
 
