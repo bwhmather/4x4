@@ -17,32 +17,32 @@ var data = {
 
     "front_wheel": {
         "mass": 0.15,
-        "radius": 15,
+        "radius": 13,
         "friction": 1.2,
-        "torque": 1000,
+        "torque": 200,
         "dtheta": 5 * Math.PI
     },
     "front_suspension": {
-        "stiffness": 250,
-        "damping": 10,
-        "spring_anchor": v(-25, 5),
-        "spring_length": 25,
-        "arm_anchor": v(2.5, -10)
+        "stiffness": 450,
+        "damping": 12,
+        "spring_anchor": v(30, 5),
+        "spring_length": 20,
+        "arm_anchor": v(0, -10)
     },
 
     "back_wheel": {
         "mass": 0.15,
-        "radius": 15,
+        "radius": 13,
         "friction": 1.2,
-        "torque": 1000,
+        "torque": 200,
         "dtheta": 5 * Math.PI
     },
     "back_suspension": {
-        "stiffness": 250,
-        "damping": 10,
-        "spring_anchor": v(30, 5),
-        "spring_length": 25,
-        "arm_anchor": v(2.5, -10)
+        "stiffness": 450,
+        "damping": 12,
+        "spring_anchor": v(-30, 5),
+        "spring_length": 20,
+        "arm_anchor": v(0, -10)
     }
 };
 
@@ -160,7 +160,7 @@ var Pickup = function(space, spec, offset) {
 
 Pickup.prototype.setThrottle = function(throttle) {
     var dtheta = 20 * Math.PI;
-    var torque = 10000;
+    var torque = 7500;
 
     this.frontMotor.rate = (throttle < 0 ? -1 : 1) * dtheta;
     this.frontMotor.maxForce = Math.abs(throttle) * torque;
@@ -177,7 +177,6 @@ Pickup.prototype.setThrottle = function(throttle) {
 Pickup.prototype.draw = function(ctx, scale, point2canvas) {
     var spec = this.spec;
 
-    console.log(scale);
     ctx.save();
     var c = point2canvas(this.chassis.p);
     ctx.translate(c.x, c.y);
@@ -195,7 +194,7 @@ Pickup.prototype.draw = function(ctx, scale, point2canvas) {
 var Game = function() {
     Demo.call(this);
 
-    this.scale = 1.5;
+    this.scale = 2;
     var space = this.space;
 
     space.iterations = 10;
