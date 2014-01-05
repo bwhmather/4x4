@@ -16,33 +16,33 @@ var data = {
     },
 
     "front_wheel": {
-        "mass": 0.2,
-        "radius": 20,
-        "friction": 0.9,
-        "torque": 2000,
-        "dtheta": 10 * Math.PI
+        "mass": 0.15,
+        "radius": 15,
+        "friction": 1.2,
+        "torque": 1000,
+        "dtheta": 5 * Math.PI
     },
     "front_suspension": {
-        "stiffness": 100,
+        "stiffness": 250,
         "damping": 10,
-        "spring_anchor": v(-30, 10),
-        "spring_length": 35,
-        "arm_anchor": v(0, -10)
+        "spring_anchor": v(-25, 5),
+        "spring_length": 25,
+        "arm_anchor": v(2.5, -10)
     },
 
     "back_wheel": {
-        "mass": 0.2,
-        "radius": 20,
-        "friction": 0.9,
-        "torque": 2000,
-        "dtheta": 10 * Math.PI
+        "mass": 0.15,
+        "radius": 15,
+        "friction": 1.2,
+        "torque": 1000,
+        "dtheta": 5 * Math.PI
     },
     "back_suspension": {
-        "stiffness": 100,
+        "stiffness": 250,
         "damping": 10,
-        "spring_anchor": v(30, 10),
-        "spring_length": 35,
-        "arm_anchor": v(0, -10)
+        "spring_anchor": v(30, 5),
+        "spring_length": 25,
+        "arm_anchor": v(2.5, -10)
     }
 };
 
@@ -72,7 +72,6 @@ Wheel.prototype.draw = function(ctx, scale, point2canvas) {
     var c = point2canvas(this.p);
     var r = this.spec.radius;
 
-    console.log(scale);
     ctx.save();
     ctx.translate(c.x, c.y);
     ctx.rotate(-this.a);
@@ -196,7 +195,7 @@ Pickup.prototype.draw = function(ctx, scale, point2canvas) {
 var Game = function() {
     Demo.call(this);
 
-    this.scale = 1;
+    this.scale = 1.5;
     var space = this.space;
 
     space.iterations = 10;
