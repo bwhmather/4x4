@@ -226,7 +226,7 @@ var Game = function() {
         v(0,0)
     ];
     this.borderImage = document.getElementById('borderImage');
-    this.borderPattern = this.ctx.createPattern(this.borderImage, 'repeat');
+    this.borderPattern = this.ctx.createPattern(this.borderImage, 'repeat-x');
     this.groundImage = document.getElementById('groundImage');
     this.groundPattern = this.ctx.createPattern(this.groundImage, 'repeat');
 
@@ -307,6 +307,8 @@ Game.prototype.draw = function() {
 
 
     ctx.fillStyle = self.borderPattern;
+    var borderHeight = 10;
+    var borderScale = scale * borderHeight / this.borderImage.height;
     for (var i=0; i<(this.terrainVerts.length - 1); i++) {
         ctx.save();
         var a = point2canvas( self.terrainVerts[i]);
@@ -317,8 +319,8 @@ Game.prototype.draw = function() {
         // TODO it seems unlikely that this is the most efficient way to use the gpu
         // skew in the y direction by the gradient of the line with
         ctx.transform(1, gradient, 0, 1, 0, a.y -2 - a.x * gradient);
-        ctx.scale(scale, scale);
-        ctx.fillRect(a.x / scale, 0, (b.x - a.x) / scale, 16);
+        ctx.scale(borderScale, borderScale);
+        ctx.fillRect(a.x / borderScale, 0, (b.x - a.x) / borderScale, this.borderImage.height);
 
         ctx.restore();
     }
