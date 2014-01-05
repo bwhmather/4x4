@@ -201,7 +201,6 @@ Pickup.prototype.draw = function(ctx, scale, point2canvas) {
 var Game = function() {
     Demo.call(this);
 
-    this.scale = 2;
     var space = this.space;
 
     space.iterations = 10;
@@ -273,13 +272,23 @@ Game.prototype.onKeyUp = function(e) {
 };
 
 Game.prototype.draw = function() {
-    Demo.prototype.draw.call(this);
-
     var self = this;
 
     var ctx = self.ctx;
-    var scale = self.scale;
-    var point2canvas = self.point2canvas;
+
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+
+    var min = -(40 + 40 + 40 + 30 + 10);
+    var max = -2 * min;
+
+    var scale = height / (max - min)
+
+    var point2canvas = function(point) {
+        return v(point.x * scale, (max - point.y) * scale);
+    }
+
+    ctx.clearRect(0, 0, this.width, this.height);
 
     self.pickup.draw(ctx, scale, point2canvas);
 
@@ -308,12 +317,12 @@ Game.prototype.draw = function() {
         // TODO it seems unlikely that this is the most efficient way to use the gpu
         // skew in the y direction by the gradient of the line with
         ctx.transform(1, gradient, 0, 1, 0, a.y -2 - a.x * gradient);
-        ctx.fillRect(a.x, 0, b.x - a.x, 16);
+        ctx.scale(scale, scale);
+        ctx.fillRect(a.x / scale, 0, (b.x - a.x) / scale, 16);
 
         ctx.restore();
     }
 }
 
-var pu = new Game();
-pu.run();
-
+var game = new Game();
+game.run();
