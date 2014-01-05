@@ -224,7 +224,7 @@ var Game = function() {
     this.groundImage = document.getElementById('groundImage');
     this.groundPattern = this.ctx.createPattern(this.groundImage, 'repeat');
 
-    for (var x=0; x<10000; x+=40) {
+    for (var x=0; x<10000; x+=20) {
         var y = 0;
         for (var i in components) {
             y += components[i].a * Math.sin(x * components[i].f)
@@ -300,7 +300,7 @@ Game.prototype.draw = function() {
 
         // TODO it seems unlikely that this is the most efficient way to use the gpu
         // skew in the y direction by the gradient of the line with
-        ctx.transform(1, gradient, 0, 1, 0, a.y - a.x * gradient);
+        ctx.transform(1, gradient, 0, 1, 0, a.y -2 - a.x * gradient);
         ctx.fillRect(a.x, 0, b.x - a.x, 16);
 
         ctx.restore();
