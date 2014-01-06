@@ -394,6 +394,7 @@ var draw = function() {
 
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, width, height);
+    drawInfo();
 
     // identity + translation
     ctx.scale(1, 1);
@@ -404,6 +405,23 @@ var draw = function() {
 
 }
 
+var drawInfo = function() {
+    var maxWidth = canvas.width - 20;
+
+    ctx.textAlign = 'start';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = "black";
+    //this.ctx.fillText(this.ctx.font, 100, 100);
+    var fpsStr = Math.floor(fps * 10) / 10;
+    if (space.activeShapes.count === 0) {
+        fpsStr = '--';
+    }
+    ctx.fillText("FPS: " + fpsStr, 10, 50, maxWidth);
+    ctx.fillText("Step: " + space.stamp, 10, 80, maxWidth);
+
+    ctx.fillText("Simulation time: " + simulationTime + " ms", 10, 170, maxWidth);
+    ctx.fillText("Draw time: " + drawTime + " ms", 10, 200, maxWidth);
+};
 var onKeyDown = function(e) {
     if (e.keyCode === 39) {
         rightPressed = true;
