@@ -446,12 +446,14 @@ if (!!('ontouchstart' in document.documentElement)) {
 
     var leftPedalDown = function(e) {
         leftPressed = true;
+        e.preventDefault();
         return false;
     };
     leftPedal.addEventListener('touchstart', leftPedalDown);
 
     var leftPedalUp = function(e) {
         leftPressed = false;
+        e.preventDefault();
         return false;
     };
     leftPedal.addEventListener('touchleave', leftPedalUp);
@@ -459,12 +461,14 @@ if (!!('ontouchstart' in document.documentElement)) {
 
     var rightPedalDown = function(e) {
         rightPressed = true;
+        e.preventDefault();
         return false;
     };
     rightPedal.addEventListener('touchstart', rightPedalDown);
 
     var rightPedalUp = function(e) {
         rightPressed = false;
+        e.preventDefault();
         return false;
     }
     rightPedal.addEventListener('touchleave', rightPedalUp);
