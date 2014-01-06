@@ -1,5 +1,17 @@
 "use strict";
 
+var v = cp.v;
+var raf = window.requestAnimationFrame
+        || window.webkitRequestAnimationFrame
+        || window.mozRequestAnimationFrame
+        || window.oRequestAnimationFrame
+        || window.msRequestAnimationFrame
+        || function(callback) {
+                return window.setTimeout(callback, 1000 / 60);
+        };
+
+
+
 var data = {
     "chassis": {
         "mass": 5,
@@ -90,7 +102,7 @@ Wheel.prototype.draw = function(ctx, scale, point2canvas) {
 };
 
 
-var Pickup = function(space, spec, offset) {
+var Vehicle = function(space, spec, offset) {
     this.spec = spec;
 
     var makeChassis = function(space, spec) {
@@ -166,7 +178,7 @@ var Pickup = function(space, spec, offset) {
     this.bodyImage = document.getElementById('bodyImage');
 }
 
-Pickup.prototype.setThrottle = function(throttle) {
+Vehicle.prototype.setThrottle = function(throttle) {
     var spec = this.spec;
 
     this.frontMotor.rate = (throttle < 0 ? -1 : 1) * spec.front_motor.rate;
@@ -181,7 +193,7 @@ Pickup.prototype.setThrottle = function(throttle) {
     }
 }
 
-Pickup.prototype.draw = function(ctx, scale, point2canvas) {
+Vehicle.prototype.draw = function(ctx, scale, point2canvas) {
     var spec = this.spec;
 
     ctx.save();
@@ -198,22 +210,8 @@ Pickup.prototype.draw = function(ctx, scale, point2canvas) {
     this.backWheel.draw(ctx, scale, point2canvas, this.backWheel);
 }
 
-var Game = function() {
-    Demo.call(this);
 
-    var space = this.space;
-
-    space.iterations = 10;
-    space.gravity = v(0, -200);
-    space.sleepTimeThreshold = 0.5;
-
-    var staticBody = space.staticBody;
-    var shape;
-
-    var boxOffset = v(100,100);
-
-    var pickup = this.pickup = new Pickup(space, data, boxOffset);
-
+var Terrain = function(space) {
     var components = [
         { f: 1/30, a: 10 },
         { f: 1/70, a: 30 },
@@ -225,11 +223,6 @@ var Game = function() {
     var terrain_verts = this.terrainVerts = [
         v(0,0)
     ];
-    this.borderImage = document.getElementById('borderImage');
-    this.borderPattern = this.ctx.createPattern(this.borderImage, 'repeat-x');
-    this.groundImage = document.getElementById('groundImage');
-    this.groundPattern = this.ctx.createPattern(this.groundImage, 'repeat');
-
     for (var x=0; x<10000; x+=20) {
         var y = 0;
         for (var i in components) {
@@ -244,68 +237,31 @@ var Game = function() {
         shape.setElasticity(1);
         shape.setFriction(0.9);
     }
+}
 
-    this.onKeyDown = this.onKeyDown.bind(this);
-    document.addEventListener('keydown', this.onKeyDown);
 
-    this.onKeyUp = this.onKeyUp.bind(this);
-    document.addEventListener('keyup', this.onKeyUp);
-};
-
-Game.prototype = Object.create(Demo.prototype);
-
-Game.prototype.onKeyDown = function(e) {
-    if (e.keyCode === 39) {
-        this.pickup.setThrottle(1);
-        return false;
-    } else if (e.keyCode === 37) {
-        this.pickup.setThrottle(-1);
-        return false;
+Terrain.prototype.draw = function(ctx, scale, point2canvas) {
+    if (!this.borderImage) {
+        this.borderImage = document.getElementById('borderImage');
     }
-};
-
-Game.prototype.onKeyUp = function(e) {
-    if (e.keyCode === 39 || e.keyCode === 37) {
-        this.pickup.setThrottle(0);
-        return false;
+    if (!this.borderPattern) {
+        this.borderPattern = ctx.createPattern(this.borderImage, 'repeat-x');
     }
-};
-
-Game.prototype.draw = function() {
-    var self = this;
-
-    var ctx = self.ctx;
-
-    var width = ctx.canvas.width;
-    var height = ctx.canvas.height;
-
-    var min = -(40 + 40 + 40 + 30 + 10);
-    var max = -2 * min;
-
-    var scale = height / (max - min)
-
-    var start = (scale * this.pickup.chassis.p.x) - (width / 3);
-
-    var point2canvas = function(point) {
-        return v(point.x * scale, -point.y * scale);
+    if (!this.groundImage) {
+        this.groundImage = document.getElementById('groundImage');
+    }
+    if (!this.groundPattern) {
+        this.groundPattern = ctx.createPattern(this.groundImage, 'repeat');
     }
 
-    ctx.setTransform(1,0,0,1,0,0);
-    ctx.clearRect(0, 0, width, height);
-
-    // identity + translation
-    ctx.scale(1, 1);
-    ctx.translate(-start, 2 * height /3);
-
-    self.pickup.draw(ctx, scale, point2canvas);
 
     ctx.save();
-    ctx.fillStyle = self.groundPattern;
+    ctx.fillStyle = this.groundPattern;
     ctx.beginPath();
 
     ctx.moveTo(0, ctx.canvas.height);
-    for (var i=0; i<self.terrainVerts.length; i++) {
-        var p = point2canvas(self.terrainVerts[i]);
+    for (var i=0; i<this.terrainVerts.length; i++) {
+        var p = point2canvas(this.terrainVerts[i]);
         ctx.lineTo(p.x, p.y + 2);
     }
     ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
@@ -313,13 +269,13 @@ Game.prototype.draw = function() {
     ctx.restore();
 
 
-    ctx.fillStyle = self.borderPattern;
+    ctx.fillStyle = this.borderPattern;
     var borderHeight = 12;
     var borderScale = scale * borderHeight / this.borderImage.height;
     for (var i=0; i<(this.terrainVerts.length - 1); i++) {
         ctx.save();
-        var a = point2canvas( self.terrainVerts[i]);
-        var b = point2canvas(self.terrainVerts[i+1]);
+        var a = point2canvas( this.terrainVerts[i]);
+        var b = point2canvas(this.terrainVerts[i+1]);
 
         var gradient = (b.y - a.y) / (b.x - a.x);
 
@@ -333,5 +289,131 @@ Game.prototype.draw = function() {
     }
 }
 
-var game = new Game();
-game.run();
+
+/* Initialise Statistics */
+var fps = 0;
+var simulationTime = 0;
+var drawTime = 0;
+
+/* Initialise Chipmunk Physics*/
+var space = new cp.Space();
+
+space.iterations = 10;
+space.gravity = v(0, -200);
+space.sleepTimeThreshold = 0.5;
+
+
+/* Initialise Rendering */
+var canvas = document.getElementsByTagName('canvas')[0];
+
+canvas.oncontextmenu = function(e) { e.preventDefault(); }
+canvas.onmousedown = function(e) { e.preventDefault(); };
+canvas.onmouseup = function(e) { e.preventDefault(); };
+
+var ctx = canvas.getContext('2d');
+
+/* Build Scene */
+var vehicle = new Vehicle(space, data, v(100,100));
+var terrain = new Terrain(space);
+
+
+var running = false;
+var resized = false;
+
+var run = function() {
+    running = true;
+
+    var lastTime = 0;
+    var step = function(time) {
+        var dt = time - lastTime;
+
+        // Update FPS
+        if(dt > 0) {
+            fps = 0.9*fps + 0.1*(1000/dt);
+        }
+
+
+        var lastNumActiveShapes = space.activeShapes.count;
+
+        // Run Physics
+        var now = Date.now();
+        space.step(1/60);
+        simulationTime += Date.now() - now;
+
+        // Only redraw if the simulation isn't asleep.
+        if (lastNumActiveShapes > 0 || resized) {
+            now = Date.now();
+            draw();
+            drawTime += Date.now() - now;
+            resized = false;
+        }
+
+        lastTime = time;
+
+        if (running) {
+            raf(step);
+        }
+    };
+
+    step(0);
+};
+
+var stop = function() {
+    running = false;
+};
+
+var draw = function() {
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+
+    var min = -(40 + 40 + 40 + 30 + 10);
+    var max = -2 * min;
+
+    var scale = height / (max - min)
+
+    var start = (scale * vehicle.chassis.p.x) - (width / 3);
+
+    var point2canvas = function(point) {
+        return v(point.x * scale, -point.y * scale);
+    }
+
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.clearRect(0, 0, width, height);
+
+    // identity + translation
+    ctx.scale(1, 1);
+    ctx.translate(-start, 2 * height /3);
+
+    vehicle.draw(ctx, scale, point2canvas);
+    terrain.draw(ctx, scale, point2canvas)
+
+}
+
+var onKeyDown = function(e) {
+    if (e.keyCode === 39) {
+        vehicle.setThrottle(1);
+        return false;
+    } else if (e.keyCode === 37) {
+        vehicle.setThrottle(-1);
+        return false;
+    }
+};
+document.addEventListener('keydown', onKeyDown);
+
+var onKeyUp = function(e) {
+    if (e.keyCode === 39 || e.keyCode === 37) {
+        vehicle.setThrottle(0);
+        return false;
+    }
+};
+document.addEventListener('keyup', onKeyUp);
+
+var onResize = function(e) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    resized = true;
+};
+window.addEventListener('resize', onResize);
+window.onResize();
+
+run();
