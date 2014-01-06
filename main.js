@@ -352,7 +352,7 @@ var run = function() {
 
         // Run Physics
         var now = Date.now();
-        space.step(Math.max(1/120, Math.min(dt, 1/60)));
+        space.step(1/60);
         simulationTime += Date.now() - now;
 
         // Only redraw if the simulation isn't asleep.
