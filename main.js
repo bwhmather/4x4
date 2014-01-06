@@ -284,11 +284,18 @@ Game.prototype.draw = function() {
 
     var scale = height / (max - min)
 
+    var start = (scale * this.pickup.chassis.p.x) - (width / 3);
+
     var point2canvas = function(point) {
-        return v(point.x * scale, (max - point.y) * scale);
+        return v(point.x * scale, -point.y * scale);
     }
 
+    ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, width, height);
+
+    // identity + translation
+    ctx.scale(1, 1);
+    ctx.translate(-start, 2 * height /3);
 
     self.pickup.draw(ctx, scale, point2canvas);
 
@@ -307,7 +314,7 @@ Game.prototype.draw = function() {
 
 
     ctx.fillStyle = self.borderPattern;
-    var borderHeight = 10;
+    var borderHeight = 12;
     var borderScale = scale * borderHeight / this.borderImage.height;
     for (var i=0; i<(this.terrainVerts.length - 1); i++) {
         ctx.save();
