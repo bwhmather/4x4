@@ -313,12 +313,19 @@ canvas.onmouseup = function(e) { e.preventDefault(); };
 var ctx = canvas.getContext('2d');
 
 /* Build Scene */
+var giantInvisibleWall = new cp.SegmentShape(space.staticBody, v(0, -10000), v(0, 10000), 0);
+giantInvisibleWall.setElasticity(2);
+space.addShape(giantInvisibleWall);
+
 var vehicle = new Vehicle(space, data, v(100,100));
 var terrain = new Terrain(space);
 
 
 var running = false;
 var resized = false;
+
+var leftPressed = false;
+var rightPressed = false;
 
 var run = function() {
     running = true;
@@ -332,12 +339,20 @@ var run = function() {
             fps = 0.9*fps + 0.1*(1000/dt);
         }
 
-
         var lastNumActiveShapes = space.activeShapes.count;
+
+        // Handle Input
+        if (rightPressed && !leftPressed) {
+            vehicle.setThrottle(1);
+        } else if (leftPressed && !rightPressed) {
+            vehicle.setThrottle(-1);
+        } else {
+            vehicle.setThrottle(0);
+        }
 
         // Run Physics
         var now = Date.now();
-        space.step(1/60);
+        space.step(Math.max(1/120, Math.min(dt, 1/60)));
         simulationTime += Date.now() - now;
 
         // Only redraw if the simulation isn't asleep.
@@ -371,7 +386,7 @@ var draw = function() {
 
     var scale = height / (max - min)
 
-    var start = (scale * vehicle.chassis.p.x) - (width / 3);
+    var start = Math.max(0, (scale * vehicle.chassis.p.x) - (width / 3));
 
     var point2canvas = function(point) {
         return v(point.x * scale, -point.y * scale);
@@ -391,18 +406,21 @@ var draw = function() {
 
 var onKeyDown = function(e) {
     if (e.keyCode === 39) {
-        vehicle.setThrottle(1);
+        rightPressed = true;
         return false;
     } else if (e.keyCode === 37) {
-        vehicle.setThrottle(-1);
+        leftPressed = true;
         return false;
     }
 };
 document.addEventListener('keydown', onKeyDown);
 
 var onKeyUp = function(e) {
-    if (e.keyCode === 39 || e.keyCode === 37) {
-        vehicle.setThrottle(0);
+    if (e.keyCode === 39) {
+        rightPressed = false;
+        return false;
+    } else if (e.keyCode === 37) {
+        leftPressed = false;
         return false;
     }
 };
@@ -415,5 +433,43 @@ var onResize = function(e) {
 };
 window.addEventListener('resize', onResize);
 window.onResize();
+
+
+
+
+if (!!('ontouchstart' in document.documentElement)) {
+    var leftPedal = document.getElementById('leftPedal');
+    var rightPedal = document.getElementById('rightPedal');
+
+    leftPedal.hidden = rightPedal.hidden = false;
+
+
+    var leftPedalDown = function(e) {
+        leftPressed = true;
+        return false;
+    };
+    leftPedal.addEventListener('touchstart', leftPedalDown);
+
+    var leftPedalUp = function(e) {
+        leftPressed = false;
+        return false;
+    };
+    leftPedal.addEventListener('touchleave', leftPedalUp);
+    leftPedal.addEventListener('touchend', leftPedalUp);
+
+    var rightPedalDown = function(e) {
+        rightPressed = true;
+        return false;
+    };
+    rightPedal.addEventListener('touchstart', rightPedalDown);
+
+    var rightPedalUp = function(e) {
+        rightPressed = false;
+        return false;
+    }
+    rightPedal.addEventListener('touchleave', rightPedalUp);
+    rightPedal.addEventListener('touchend', rightPedalUp);
+
+}
 
 run();
