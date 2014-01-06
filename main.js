@@ -272,7 +272,7 @@ Terrain.prototype.draw = function(ctx, box) {
     ctx.fill();
     ctx.restore();
 
-    var borderHeight = 12;
+    var borderHeight = 18;
     for (var x=box.left - (box.left % step); x<box.right; x+=step) {
         ctx.save();
         var a = v(x, this.getHeight(x));
@@ -283,9 +283,39 @@ Terrain.prototype.draw = function(ctx, box) {
         // TODO it seems unlikely that this is the most efficient way to use the gpu
         // skew in the y direction by the gradient of the line with
         ctx.transform(1, gradient, 0, 1, 0, a.y + 2 - a.x * gradient);
-//        ctx.fillRect(a.x / borderScale, 0, (b.x - a.x) / borderScale, this.borderImage.height);
         ctx.scale(1, -1);
-        ctx.drawImage(this.borderImage, a.x, 0, b.x - a.x, borderHeight);
+
+        var l = 1.5 * this.borderImage.width;
+        var xa = x - (x % l);
+        var xb = xa + l;
+
+        var h = borderHeight;
+        while (true) {
+            var s = Math.max(a.x, xa);
+            var f = Math.min(b.x, xb);
+
+            var ia = Math.floor((s / 1.5) % this.borderImage.width);
+            var ib = Math.floor(this.borderImage.width - ia);
+            ib = Math.floor((f - s) / 1.5);
+            if (!ib) {break}
+
+            //console.log("xa: " + xa + ", xb: " + xb + ", s: " + s + ", f: " + f + ", x: " + x);
+            //ctx.drawImage(this.borderImage,
+            //        0, 0, this.borderImage.width, this.borderImage.height,
+            //        a.x, 0, b.x - a.x, borderHeight);
+            ctx.drawImage(this.borderImage,
+//                Math.floor((s / 1.5) % this.borderImage.width), 0, //s % this.borderImage.width, 0,
+  //                  Math.floor((f - s) / 1.5), h,
+
+                    ia, 0, ib, this.borderImage.height,
+                    s, 0,
+                    f - s, h);
+
+            if (xb >= b.x) {break;}
+
+            xa+= l;
+            xb+= l;
+        }
 
         ctx.restore();
     }
