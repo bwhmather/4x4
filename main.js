@@ -212,40 +212,44 @@ Vehicle.prototype.draw = function(ctx, scale, point2canvas) {
 
 
 var Terrain = function(space) {
-    var components = [
+    this.components = [
         { f: 1/30, a: 10 },
         { f: 1/70, a: 30 },
         { f: 1/150, a: 40 },
         { f: 1/190, a: 40 },
         { f: 1/310, a: 40 }
-    ]
-
-    var terrain_verts = this.terrainVerts = [
-        v(0,0)
     ];
-    for (var x=0; x<10000; x+=20) {
-        var y = 0;
-        for (var i in components) {
-            y += components[i].a * Math.sin(x * components[i].f)
-        }
-        terrain_verts.push(v(x + 200, y));
-    }
 
-    for(var i=0; i<(terrain_verts.length - 1); i++){
-        var a = terrain_verts[i], b = terrain_verts[i+1];
+    var a = v(0, this.getHeight(0));
+    var b = v(0,0);
+    for(var x=20; x<10000; x+=20) {
+        b = v(x, this.getHeight(x));
+
         var shape = space.addShape(new cp.SegmentShape(space.staticBody, a, b, 0));
         shape.setElasticity(1);
         shape.setFriction(0.9);
+
+        a = b;
     }
 }
 
+Terrain.prototype.getHeight = function(x) {
+    var height = 0;
+    if (x > 200) {
+        for (var i in this.components) {
+            height += this.components[i].a * Math.sin((x-200) * this.components[i].f);
+        }
+    }
+    return height;
+}
 
-Terrain.prototype.draw = function(ctx, scale, point2canvas) {
+
+Terrain.prototype.draw = function(ctx, box) {
     if (!this.borderImage) {
         this.borderImage = document.getElementById('borderImage');
     }
     if (!this.borderPattern) {
-        this.borderPattern = ctx.createPattern(this.borderImage, 'repeat-x');
+        this.borderPattern = ctx.createPattern(this.borderImage, 'repeat');
     }
     if (!this.groundImage) {
         this.groundImage = document.getElementById('groundImage');
@@ -254,36 +258,34 @@ Terrain.prototype.draw = function(ctx, scale, point2canvas) {
         this.groundPattern = ctx.createPattern(this.groundImage, 'repeat');
     }
 
+    var step = 20;
 
     ctx.save();
     ctx.fillStyle = this.groundPattern;
     ctx.beginPath();
 
-    ctx.moveTo(0, ctx.canvas.height);
-    for (var i=0; i<this.terrainVerts.length; i++) {
-        var p = point2canvas(this.terrainVerts[i]);
-        ctx.lineTo(p.x, p.y + 2);
+    ctx.moveTo(box.left, box.bottom);
+    for (var x=box.left - (box.left % step); x<box.right; x+=step) {
+        ctx.lineTo(x, this.getHeight(x));
     }
-    ctx.lineTo(ctx.canvas.width, ctx.canvas.height);
+    ctx.lineTo(box.right, box.bottom);
     ctx.fill();
     ctx.restore();
 
-
-    ctx.fillStyle = this.borderPattern;
     var borderHeight = 12;
-    var borderScale = scale * borderHeight / this.borderImage.height;
-    for (var i=0; i<(this.terrainVerts.length - 1); i++) {
+    for (var x=box.left - (box.left % step); x<box.right; x+=step) {
         ctx.save();
-        var a = point2canvas( this.terrainVerts[i]);
-        var b = point2canvas(this.terrainVerts[i+1]);
+        var a = v(x, this.getHeight(x));
+        var b = v(x+step, this.getHeight(x+step));
 
         var gradient = (b.y - a.y) / (b.x - a.x);
 
         // TODO it seems unlikely that this is the most efficient way to use the gpu
         // skew in the y direction by the gradient of the line with
-        ctx.transform(1, gradient, 0, 1, 0, a.y -2 - a.x * gradient);
-        ctx.scale(borderScale, borderScale);
-        ctx.fillRect(a.x / borderScale, 0, (b.x - a.x) / borderScale, this.borderImage.height);
+        ctx.transform(1, gradient, 0, 1, 0, a.y + 2 - a.x * gradient);
+//        ctx.fillRect(a.x / borderScale, 0, (b.x - a.x) / borderScale, this.borderImage.height);
+        ctx.scale(1, -1);
+        ctx.drawImage(this.borderImage, a.x, 0, b.x - a.x, borderHeight);
 
         ctx.restore();
     }
@@ -381,12 +383,16 @@ var draw = function() {
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
 
-    var min = -(40 + 40 + 40 + 30 + 10);
-    var max = -2 * min;
+    var viewbox = {};
+    viewbox.bottom = -(40 + 40 + 40 + 30 + 10);
+    viewbox.top = 2*(40 + 40 + 40 + 30 + 10);
 
-    var scale = height / (max - min)
+    var scale = height / (viewbox.top - viewbox.bottom)
 
-    var start = Math.max(0, (scale * vehicle.chassis.p.x) - (width / 3));
+    viewbox.left = Math.max(0, vehicle.chassis.p.x - (width / (3*scale)));
+    viewbox.right = viewbox.left + width / scale;
+
+
 
     var point2canvas = function(point) {
         return v(point.x * scale, -point.y * scale);
@@ -396,12 +402,19 @@ var draw = function() {
     ctx.clearRect(0, 0, width, height);
     drawInfo();
 
-    // identity + translation
-    ctx.scale(1, 1);
-    ctx.translate(-start, 2 * height /3);
+    ctx.translate(-scale * viewbox.left, scale * viewbox.top);
 
     vehicle.draw(ctx, scale, point2canvas);
-    terrain.draw(ctx, scale, point2canvas)
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(scale, -scale);
+    ctx.translate(-viewbox.left, -viewbox.top);
+
+    viewbox.top -= 50;
+    viewbox.bottom += 50;
+    viewbox.left += 50;
+    viewbox.right -= 50;
+    terrain.draw(ctx, viewbox);
 
 }
 
