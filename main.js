@@ -445,12 +445,7 @@ var draw = function() {
     ctx.scale(scale, -scale);
     ctx.translate(-viewbox.left, -viewbox.top);
 
-    viewbox.top -= 50;
-    viewbox.bottom += 50;
-    viewbox.left += 50;
-    viewbox.right -= 50;
     terrain.draw(ctx, viewbox);
-
 }
 
 var drawInfo = function() {
