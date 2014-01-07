@@ -244,13 +244,8 @@ Terrain.prototype.getHeight = function(x) {
 }
 
 
-Terrain.prototype.draw = function(ctx, box) {
-    if (!this.borderImage) {
-        this.borderImage = document.getElementById('borderImage');
-    }
-    if (!this.borderPattern) {
-        this.borderPattern = ctx.createPattern(this.borderImage, 'repeat');
-    }
+Terrain.prototype.drawFill = function(ctx, box) {
+
     if (!this.groundImage) {
         this.groundImage = document.getElementById('groundImage');
     }
@@ -271,11 +266,22 @@ Terrain.prototype.draw = function(ctx, box) {
     ctx.lineTo(box.right, box.bottom);
     ctx.fill();
     ctx.restore();
+};
+
+Terrain.prototype.drawBorder = function(ctx, box) {
+    if (!this.borderImage) {
+        this.borderImage = document.getElementById('borderImage');
+    }
+    if (!this.borderPattern) {
+        this.borderPattern = ctx.createPattern(this.borderImage, 'repeat');
+    }
 
     var borderImage = this.borderImage;
     var borderHeight = 18;
     var borderScale = borderImage.height / borderHeight;
     var borderRepeat = borderImage.width * borderScale;
+
+    var step = 20;
 
     for (var x=box.left - (box.left % step); x<box.right; x+=step) {
         ctx.save();
@@ -314,6 +320,11 @@ Terrain.prototype.draw = function(ctx, box) {
 
         ctx.restore();
     }
+};
+
+Terrain.prototype.draw = function(ctx, box) {
+    this.drawFill(ctx, box);
+    this.drawBorder(ctx, box);
 }
 
 
