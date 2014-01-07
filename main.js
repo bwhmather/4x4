@@ -272,7 +272,11 @@ Terrain.prototype.draw = function(ctx, box) {
     ctx.fill();
     ctx.restore();
 
+    var borderImage = this.borderImage;
     var borderHeight = 18;
+    var borderScale = borderImage.height / borderHeight;
+    var borderRepeat = borderImage.width * borderScale;
+
     for (var x=box.left - (box.left % step); x<box.right; x+=step) {
         ctx.save();
         var a = v(x, this.getHeight(x));
@@ -281,40 +285,31 @@ Terrain.prototype.draw = function(ctx, box) {
         var gradient = (b.y - a.y) / (b.x - a.x);
 
         // TODO it seems unlikely that this is the most efficient way to use the gpu
-        // skew in the y direction by the gradient of the line with
         ctx.transform(1, gradient, 0, 1, 0, a.y + 2 - a.x * gradient);
         ctx.scale(1, -1);
 
-        var l = 1.5 * this.borderImage.width;
-        var xa = x - (x % l);
-        var xb = xa + l;
+        var xa = x - (x % borderRepeat);
+        var xb = xa + borderRepeat;
 
         var h = borderHeight;
         while (true) {
             var s = Math.max(a.x, xa);
             var f = Math.min(b.x, xb);
 
-            var ia = Math.floor((s / 1.5) % this.borderImage.width);
-            var ib = Math.floor(this.borderImage.width - ia);
-            ib = Math.floor((f - s) / 1.5);
+            var ia = Math.floor((s / borderScale) % borderImage.width);
+            var ib = Math.floor(borderImage.width - ia);
+            ib = Math.floor((f - s) / borderScale);
             if (!ib) {break}
 
-            //console.log("xa: " + xa + ", xb: " + xb + ", s: " + s + ", f: " + f + ", x: " + x);
-            //ctx.drawImage(this.borderImage,
-            //        0, 0, this.borderImage.width, this.borderImage.height,
-            //        a.x, 0, b.x - a.x, borderHeight);
-            ctx.drawImage(this.borderImage,
-//                Math.floor((s / 1.5) % this.borderImage.width), 0, //s % this.borderImage.width, 0,
-  //                  Math.floor((f - s) / 1.5), h,
-
-                    ia, 0, ib, this.borderImage.height,
-                    s, 0,
-                    f - s, h);
+            ctx.drawImage(borderImage,
+                ia, 0, ib, borderImage.height,
+                s, 0,
+                f - s, h);
 
             if (xb >= b.x) {break;}
 
-            xa+= l;
-            xb+= l;
+            xa+= borderRepeat;
+            xb+= borderRepeat;
         }
 
         ctx.restore();
