@@ -285,6 +285,7 @@ Terrain.prototype.drawBorder = function(ctx, box) {
 
     for (var x=box.left - (box.left % step); x<box.right; x+=step) {
         ctx.save();
+
         var a = v(x, this.getHeight(x));
         var b = v(x+step, this.getHeight(x+step));
 
@@ -294,28 +295,26 @@ Terrain.prototype.drawBorder = function(ctx, box) {
         ctx.transform(1, gradient, 0, 1, 0, a.y + 2 - a.x * gradient);
         ctx.scale(1, -1);
 
-        var xa = x - (x % borderRepeat);
-        var xb = xa + borderRepeat;
+        var sectionStart = x - (x % borderRepeat);
+        var sectionFinish = sectionStart + borderRepeat;
 
-        var h = borderHeight;
-        while (true) {
-            var s = Math.max(a.x, xa);
-            var f = Math.min(b.x, xb);
+        while (sectionStart < b.x) {
+            var canvasStart = Math.max(a.x, sectionStart);
+            var canvasWidth = Math.min(b.x, sectionFinish) - canvasStart;
 
-            var ia = Math.floor((s / borderScale) % borderImage.width);
-            var ib = Math.floor(borderImage.width - ia);
-            ib = Math.floor((f - s) / borderScale);
-            if (!ib) {break}
+            var imageStart = Math.floor((canvasStart / borderScale) % borderImage.width);
+            var imageWidth = Math.floor(canvasWidth / borderScale);
+            if (!imageWidth) {break}
 
             ctx.drawImage(borderImage,
-                ia, 0, ib, borderImage.height,
-                s, 0,
-                f - s, h);
+                imageStart, 0,
+                imageWidth, borderImage.height,
 
-            if (xb >= b.x) {break;}
+                canvasStart, 0,
+                canvasWidth, borderHeight);
 
-            xa+= borderRepeat;
-            xb+= borderRepeat;
+            sectionStart += borderRepeat;
+            sectionFinish += borderRepeat;
         }
 
         ctx.restore();
