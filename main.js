@@ -260,7 +260,7 @@ Terrain.prototype.drawFill = function(ctx, box) {
     ctx.beginPath();
 
     ctx.moveTo(box.left, box.bottom);
-    for (var x=box.left - (box.left % step); x<box.right; x+=step) {
+    for (var x=box.left - (box.left % step); x<box.right + step; x+=step) {
         ctx.lineTo(x, this.getHeight(x));
     }
     ctx.lineTo(box.right, box.bottom);
