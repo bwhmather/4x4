@@ -277,8 +277,8 @@ Terrain.prototype.drawBorder = function(ctx, box) {
     }
 
     var borderImage = this.borderImage;
-    var borderHeight = 18;
-    var borderScale = borderImage.height / borderHeight;
+    var borderHeight = 12;
+    var borderScale = borderHeight / borderImage.height;
     var borderRepeat = borderImage.width * borderScale;
 
     var step = 20;
@@ -303,7 +303,7 @@ Terrain.prototype.drawBorder = function(ctx, box) {
             var canvasWidth = Math.min(b.x, sectionFinish) - canvasStart;
 
             var imageStart = Math.floor((canvasStart / borderScale) % borderImage.width);
-            var imageWidth = Math.floor(canvasWidth / borderScale);
+            var imageWidth = Math.ceil(canvasWidth / borderScale);
             if (!imageWidth) {break}
 
             ctx.drawImage(borderImage,
