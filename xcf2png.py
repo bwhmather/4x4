@@ -13,10 +13,10 @@ script = """
 (define infile "{infile}")
 (define outfile "{outfile}")
 
-(define image (car (gimp-file-load 1 infile infile)))
-(define drawable (car (gimp-image-flatten image)))
+(define image (car (gimp-file-load RUN-NONINTERACTIVE infile infile)))
+(define drawable (car (gimp-image-merge-visible-layers image CLIP-TO-IMAGE)))
 
-(file-png-save-defaults 1 image drawable outfile outfile)
+(file-png-save-defaults RUN-NONINTERACTIVE image drawable outfile outfile)
 
 (gimp-quit 0)
 """.format(infile=infile, outfile=outfile)
