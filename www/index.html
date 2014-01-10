@@ -2,43 +2,22 @@
 <head>
   <meta charset="utf-8">
   <title>Pickup</title>
-  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-  <style>
-    body {
-        margin: 0;
-        background: #8cbed6;
-    }
-    canvas {
-        position: fixed;
-        left: 0; top: 0;
-    }
-    #leftPedal,
-    #rightPedal {
-      width: 15%;
-      height: 20%;
-      position: fixed;
-      bottom: 5%;
-      background-image: url(pedal.png);
-      background-size: 100% 100%;
-    }
-    #leftPedal {
-      left: 5%;
-    }
-
-    #rightPedal {
-      right: 5%;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0">
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+  <canvas></canvas>
+
+  <div id="pedals">
+    <div id="leftPedal" hidden="hidden"></div>
+    <div id="rightPedal" hidden="hidden"></div>
+  </div>
+
   <image id="borderImage" src="/img/border.png" style="visibility: hidden;">
   <image id="groundImage" src="/img/ground.png" style="visibility: hidden;">
   <image id="bodyImage" src="/img/body.png" style="visibility: hidden;">
   <image id="wheelImage" src="/img/wheel.png" style="visibility: hidden;">
-  <canvas width:"100%"; height: "100%"></canvas>
 
-  <div id="leftPedal" hidden="hidden"></div>
-  <div id="rightPedal" hidden="hidden"></div>
 
   <script src="js/lib/cp.js"></script>
   <script src="js/main.js"></script>
