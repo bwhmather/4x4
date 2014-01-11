@@ -236,7 +236,7 @@ var Terrain = function(space) {
 Terrain.prototype.getHeight = function(x) {
     var height = 0;
     if (x > 200) {
-        for (var i in this.components) {
+        for (var i=0; i<this.components.length; i++) {
             height += this.components[i].a * Math.sin((x-200) * this.components[i].f);
         }
     }
