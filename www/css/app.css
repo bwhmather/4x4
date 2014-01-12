@@ -10,3 +10,21 @@ canvas {
     width: 100%;
     image-rendering: optimizeSpeed;
 }
+
+#leftPedal,
+#rightPedal {
+    width: 15%;
+    height: 20%;
+    position: fixed;
+    bottom: 5%;
+    background-image: url(img/pedal.png);
+    background-size: 100% 100%;
+}
+
+#leftPedal {
+    left: 5%;
+}
+
+#rightPedal {
+    right: 5%;
+}
