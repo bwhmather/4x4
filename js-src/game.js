@@ -5,6 +5,8 @@ var v = cp.v;
 
 var Terrain = require('./terrain.js').Terrain;
 var Vehicle = require('./vehicle.js').Vehicle;
+
+var input = require('./input.js');
 var util = require('./util.js');
 
 var data = require('./data.js');
@@ -25,8 +27,6 @@ var space;
 var terrain;
 var vehicle;
 
-var leftPressed;
-var rightPressed;
 var running;
 
 
@@ -64,10 +64,6 @@ var run = function() {
     running = false;
     resized = false;
 
-    leftPressed = false;
-    rightPressed = false;
-
-
     window.addEventListener('resize', onResize);
     onResize();
 
@@ -88,9 +84,9 @@ var run = function() {
         var lastNumActiveShapes = space.activeShapes.count;
 
         // Handle Input
-        if (rightPressed && !leftPressed) {
+        if (input.rightPressed() && !input.leftPressed()) {
             vehicle.setThrottle(1);
-        } else if (leftPressed && !rightPressed) {
+        } else if (input.leftPressed() && !input.rightPressed()) {
             vehicle.setThrottle(-1);
         } else {
             vehicle.setThrottle(0);

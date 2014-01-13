@@ -1,5 +1,8 @@
 "use strict";
 
+var rightPressed = false;
+var leftPressed = false;
+
 var onKeyDown = function(e) {
     if (e.keyCode === 39) {
         rightPressed = true;
@@ -59,4 +62,9 @@ if (!!('ontouchstart' in document.documentElement)) {
     }
     rightPedal.addEventListener('touchleave', rightPedalUp);
     rightPedal.addEventListener('touchend', rightPedalUp);
-}
+};
+
+module.exports = {
+    'leftPressed': function() { return leftPressed; },
+    'rightPressed': function() { return rightPressed; },
+};
