@@ -164,21 +164,15 @@ var draw = function() {
 };
 
 var drawInfo = function() {
-    var maxWidth = ctx.canvas.width - 20;
-
-    ctx.textAlign = 'start';
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = "black";
-    //ctx.fillText(ctx.font, 100, 100);
     var fpsStr = Math.floor(fps * 10) / 10;
     if (space.activeShapes.count === 0) {
         fpsStr = '--';
     }
-    ctx.fillText("FPS: " + fpsStr, 10, 50, maxWidth);
-    ctx.fillText("Step: " + space.stamp, 10, 80, maxWidth);
-
-    ctx.fillText("Simulation time: " + simulationTime + " ms", 10, 170, maxWidth);
-    ctx.fillText("Draw time: " + drawTime + " ms", 10, 200, maxWidth);
+//    console.log(document.getElementById('fps');
+    document.getElementById('fps').textContent = ""+fpsStr;
+    document.getElementById('step').textContent = ""+space.stamp;
+    document.getElementById('simulationTime').textContent = ""+simulationTime+" ms";
+    document.getElementById('drawTime').textContent = ""+drawTime+" ms";
 };
 
 module.exports = {

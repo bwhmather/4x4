@@ -6,9 +6,32 @@ html, body {
 }
 
 canvas {
+    position: fixed;
     display: block;
     width: 100%;
     image-rendering: optimizeSpeed;
+}
+
+#stats {
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    display: block;
+    left: 0; right: 0;
+}
+#stats dt {
+    float: left;
+    clear: left;
+    width: 180px;
+    text-align: right;
+    font-weight: bold;
+}
+#stats dt:after {
+    content: ":";
+}
+#stats dd {
+    margin-left: 180px;
+    padding-left: 10px;
 }
 
 #leftPedal,
