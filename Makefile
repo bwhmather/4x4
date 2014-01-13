@@ -17,7 +17,7 @@ $(TEXTURES) : www/img/%.png : img-src/%.xcf www/img
 	$(PYTHON) ./xcf2png.py $< $@
 
 $(JS_OUT) : $(JS_SOURCES) www/js
-	$(BROWSERIFY) -o $(JS_OUT) $(JS_MAIN)
+	$(BROWSERIFY) --debug -o $(JS_OUT) $(JS_MAIN)
 
 $(OUTPUT_DIRS):
 	mkdir -p $@
