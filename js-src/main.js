@@ -5,18 +5,7 @@ var v = cp.v;
 
 var terrain = require('./terrain.js');
 var vehicle = require('./vehicle.js');
-
-
-var v = cp.v;
-var raf = window.requestAnimationFrame
-        || window.webkitRequestAnimationFrame
-        || window.mozRequestAnimationFrame
-        || window.oRequestAnimationFrame
-        || window.msRequestAnimationFrame
-        || function(callback) {
-                return window.setTimeout(callback, 1000 / 60);
-        };
-
+var util = require('./util.js');
 
 
 var data = {
@@ -160,7 +149,7 @@ Game.prototype.run = function() {
         lastTime = time;
 
         if (this.running) {
-            raf(step);
+            util.requestAnimationFrame(step);
         }
     }.bind(this);
 
