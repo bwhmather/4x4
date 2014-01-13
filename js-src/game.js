@@ -3,8 +3,8 @@
 var cp = require('./lib/cp.js');
 var v = cp.v;
 
-var terrain = require('./terrain.js');
-var vehicle = require('./vehicle.js');
+var Terrain = require('./terrain.js').Terrain;
+var Vehicle = require('./vehicle.js').Vehicle;
 var util = require('./util.js');
 
 
@@ -111,8 +111,8 @@ var run = function() {
     giantInvisibleWall.setElasticity(2);
     space.addShape(giantInvisibleWall);
 
-    vehicle = new vehicle.Vehicle(space, data, v(100,100));
-    terrain = new terrain.Terrain(space);
+    vehicle = new Vehicle(space, data, v(100,100));
+    terrain = new Terrain(space);
 
     running = false;
     resized = false;
