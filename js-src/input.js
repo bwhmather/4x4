@@ -69,6 +69,7 @@ var init = function() {
 
 
 module.exports = {
+    'init': init,
     'leftPressed': function() { return leftPressed; },
     'rightPressed': function() { return rightPressed; },
 };
