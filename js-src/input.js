@@ -12,8 +12,6 @@ var onKeyDown = function(e) {
         return false;
     }
 };
-document.addEventListener('keydown', onKeyDown);
-
 var onKeyUp = function(e) {
     if (e.keyCode === 39) {
         rightPressed = false;
@@ -23,46 +21,52 @@ var onKeyUp = function(e) {
         return false;
     }
 };
-document.addEventListener('keyup', onKeyUp);
 
-
-if (!!('ontouchstart' in document.documentElement)) {
-    var leftPedal = document.getElementById('leftPedal');
-    var rightPedal = document.getElementById('rightPedal');
-
-    leftPedal.hidden = rightPedal.hidden = false;
-
-
-    var leftPedalDown = function(e) {
-        leftPressed = true;
-        e.preventDefault();
-        return false;
-    };
-    leftPedal.addEventListener('touchstart', leftPedalDown);
-
-    var leftPedalUp = function(e) {
-        leftPressed = false;
-        e.preventDefault();
-        return false;
-    };
-    leftPedal.addEventListener('touchleave', leftPedalUp);
-    leftPedal.addEventListener('touchend', leftPedalUp);
-
-    var rightPedalDown = function(e) {
-        rightPressed = true;
-        e.preventDefault();
-        return false;
-    };
-    rightPedal.addEventListener('touchstart', rightPedalDown);
-
-    var rightPedalUp = function(e) {
-        rightPressed = false;
-        e.preventDefault();
-        return false;
-    }
-    rightPedal.addEventListener('touchleave', rightPedalUp);
-    rightPedal.addEventListener('touchend', rightPedalUp);
+var leftPedalDown = function(e) {
+    leftPressed = true;
+    e.preventDefault();
+    return false;
 };
+var leftPedalUp = function(e) {
+    leftPressed = false;
+    e.preventDefault();
+    return false;
+};
+
+var rightPedalDown = function(e) {
+    rightPressed = true;
+    e.preventDefault();
+    return false;
+};
+var rightPedalUp = function(e) {
+    rightPressed = false;
+    e.preventDefault();
+    return false;
+}
+
+var init = function() {
+    // Keyboard
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+
+    // Touch screen
+    if (!!('ontouchstart' in document.documentElement)) {
+        var leftPedal = document.getElementById('leftPedal');
+        var rightPedal = document.getElementById('rightPedal');
+
+        leftPedal.hidden = false;
+        rightPedal.hidden = false;
+
+        leftPedal.addEventListener('touchstart', leftPedalDown);
+        leftPedal.addEventListener('touchleave', leftPedalUp);
+        leftPedal.addEventListener('touchend', leftPedalUp);
+
+        rightPedal.addEventListener('touchstart', rightPedalDown);
+        rightPedal.addEventListener('touchleave', rightPedalUp);
+        rightPedal.addEventListener('touchend', rightPedalUp);
+    };
+}
+
 
 module.exports = {
     'leftPressed': function() { return leftPressed; },

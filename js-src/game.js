@@ -67,6 +67,8 @@ var run = function() {
     window.addEventListener('resize', onResize);
     onResize();
 
+    input.init();
+
     if (running) {
         throw "already running";
     }
