@@ -29,7 +29,7 @@ Wheel.prototype.draw = function(ctx, viewbox) {
 
     ctx.save();
     ctx.translate(this.p.x, this.p.y);
-    ctx.rotate(-this.a);
+    ctx.rotate(this.a);
     ctx.scale(1, -1);
     ctx.drawImage(this.image, -r, -r, 2*r, 2*r);
     ctx.restore();
@@ -134,7 +134,7 @@ Vehicle.prototype.draw = function(ctx, viewbox) {
     ctx.save();
     var p = this.chassis.p;
     ctx.translate(p.x, p.y);
-    ctx.rotate(-this.chassis.a);
+    ctx.rotate(this.chassis.a);
 
     ctx.scale(1, -1);
     ctx.drawImage(this.bodyImage,
