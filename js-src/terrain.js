@@ -69,7 +69,7 @@ Terrain.prototype.drawBorder = function(ctx, box) {
     }
 
     var borderImage = this.borderImage;
-    var borderHeight = 12;
+    var borderHeight = 24;
     var borderScale = borderHeight / borderImage.height;
     var borderRepeat = borderImage.width * borderScale;
 
@@ -102,7 +102,7 @@ Terrain.prototype.drawBorder = function(ctx, box) {
                 imageStart, 0,
                 imageWidth, borderImage.height,
 
-                canvasStart, 0,
+                canvasStart, -0.5*borderHeight,
                 canvasWidth, borderHeight);
 
             sectionStart += borderRepeat;
