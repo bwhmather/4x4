@@ -142,22 +142,16 @@ var draw = function() {
     viewbox.left = Math.max(0, vehicle.chassis.p.x - (width / (3*scale)));
     viewbox.right = viewbox.left + width / scale;
 
-    var point2canvas = function(point) {
-        return v(point.x * scale, -point.y * scale);
-    }
-
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, width, height);
     drawInfo();
 
-    ctx.translate(-scale * viewbox.left, scale * viewbox.top);
-
-    vehicle.draw(ctx, scale, point2canvas);
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(scale, -scale);
     ctx.translate(-viewbox.left, -viewbox.top);
 
+    vehicle.draw(ctx, viewbox);
     terrain.draw(ctx, viewbox);
 };
 
@@ -166,7 +160,6 @@ var drawInfo = function() {
     if (space.activeShapes.count === 0) {
         fpsStr = '--';
     }
-//    console.log(document.getElementById('fps');
     document.getElementById('fps').textContent = ""+fpsStr;
     document.getElementById('step').textContent = ""+space.stamp;
     document.getElementById('simulationTime').textContent = ""+simulationTime+" ms";

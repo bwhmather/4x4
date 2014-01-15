@@ -24,14 +24,13 @@ var Wheel = function(space, spec) {
 
 Wheel.prototype = Object.create(cp.Body.prototype);
 
-Wheel.prototype.draw = function(ctx, scale, point2canvas) {
-    var c = point2canvas(this.p);
+Wheel.prototype.draw = function(ctx, viewbox) {
     var r = this.spec.radius;
 
     ctx.save();
-    ctx.translate(c.x, c.y);
+    ctx.translate(this.p.x, this.p.y);
     ctx.rotate(-this.a);
-    ctx.scale(scale, scale);
+    ctx.scale(1, -1);
     ctx.drawImage(this.image, -r, -r, 2*r, 2*r);
     ctx.restore();
 
@@ -129,19 +128,20 @@ Vehicle.prototype.setThrottle = function(throttle) {
     }
 };
 
-Vehicle.prototype.draw = function(ctx, scale, point2canvas) {
+Vehicle.prototype.draw = function(ctx, viewbox) {
     var spec = this.spec;
 
     ctx.save();
-    var c = point2canvas(this.chassis.p);
-    ctx.translate(c.x, c.y);
+    var p = this.chassis.p;
+    ctx.translate(p.x, p.y);
     ctx.rotate(-this.chassis.a);
-    ctx.scale(scale, scale);
+
+    ctx.scale(1, -1);
     ctx.drawImage(this.bodyImage,
         -0.55*spec.chassis.width, -0.55*spec.chassis.height - 1.1*spec.chassis.cab.height,
         1.1*spec.chassis.width, 1.1*(spec.chassis.height + spec.chassis.cab.height));
     ctx.restore();
 
-    this.frontWheel.draw(ctx, scale, point2canvas, this.frontWheel);
-    this.backWheel.draw(ctx, scale, point2canvas, this.backWheel);
+    this.frontWheel.draw(ctx, viewbox);
+    this.backWheel.draw(ctx, viewbox);
 };
