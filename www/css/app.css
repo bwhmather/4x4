@@ -12,6 +12,26 @@ canvas {
     image-rendering: optimizeSpeed;
 }
 
+.menu-outer {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    display: table;
+}
+
+.menu-inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.menu-content {
+    display: block;
+    width: 400px;
+    background: rgba(0, 1, 0, 0.5);
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #stats {
     padding: 0;
     margin: 0;
