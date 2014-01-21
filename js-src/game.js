@@ -11,34 +11,14 @@ var util = require('./util.js');
 
 var data = require('./data.js');
 
-var ctx;
-var draw;
-var drawInfo;
-
-var resized;
-var onResize;
-
-var fps;
-var drawTime;
-var simulationTime;
-
-var giantInvisibleWall;
-var space;
-var terrain;
-var vehicle;
-
-var running;
-
-
-var run = function() {
-
+var Game = function() {
     /* Initialise Statistics */
-    fps = 0;
-    simulationTime = 0;
-    drawTime = 0;
+    this.fps = 0;
+    this.simulationTime = 0;
+    this.drawTime = 0;
 
     /* Initialise Chipmunk Physics*/
-    space = new cp.Space();
+    var space = this.space = new cp.Space();
     space.iterations = 10;
     space.gravity = v(0, -200);
     space.sleepTimeThreshold = 0.5;
@@ -51,28 +31,33 @@ var run = function() {
     canvas.onmousedown = function(e) { e.preventDefault(); };
     canvas.onmouseup = function(e) { e.preventDefault(); };
 
-    ctx = canvas.getContext('2d');
+    this.ctx = canvas.getContext('2d');
 
     /* Build Scene */
-    giantInvisibleWall = new cp.SegmentShape(space.staticBody, v(0, -10000), v(0, 10000), 0);
+    var giantInvisibleWall = new cp.SegmentShape(space.staticBody, v(0, -10000), v(0, 10000), 0);
     giantInvisibleWall.setElasticity(2);
     space.addShape(giantInvisibleWall);
 
-    vehicle = new Vehicle(space, data.landRover, v(100,100));
-    terrain = new Terrain(space);
+    this.vehicle = new Vehicle(space, data.landRover, v(100,100));
+    this.terrain = new Terrain(space);
 
-    running = false;
-    resized = false;
+    this.running = false;
+    this.resized = false;
+};
 
-    window.addEventListener('resize', onResize);
-    onResize();
+Game.prototype.run = function() {
+    if (!this.hasOwnProperty('onResize')) {
+        this.onResize = this.onResize.bind(this);
+    }
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
 
     input.init();
 
-    if (running) {
+    if (this.running) {
         throw "already running";
     }
-    running = true;
+    this.running = true;
 
     var lastTime = 0;
     var step = function(time) {
@@ -80,36 +65,36 @@ var run = function() {
 
         // Update FPS
         if(dt > 0) {
-            fps = 0.9*fps + 0.1*(1000/dt);
+            this.fps = 0.9*this.fps + 0.1*(1000/dt);
         }
 
-        var lastNumActiveShapes = space.activeShapes.count;
+        var lastNumActiveShapes = this.space.activeShapes.count;
 
         // Handle Input
         if (input.rightPressed() && !input.leftPressed()) {
-            vehicle.setThrottle(1);
+            this.vehicle.setThrottle(1);
         } else if (input.leftPressed() && !input.rightPressed()) {
-            vehicle.setThrottle(-1);
+            this.vehicle.setThrottle(-1);
         } else {
-            vehicle.setThrottle(0);
+            this.vehicle.setThrottle(0);
         }
 
         // Run Physics
         var now = Date.now();
-        space.step(1/60);
-        simulationTime += Date.now() - now;
+        this.space.step(1/60);
+        this.simulationTime += Date.now() - now;
 
         // Only redraw if the simulation isn't asleep.
-        if (lastNumActiveShapes > 0 || resized) {
+        if (lastNumActiveShapes > 0 || this.resized) {
             now = Date.now();
-            draw();
-            drawTime += Date.now() - now;
-            resized = false;
+            this.draw();
+            this.drawTime += Date.now() - now;
+            this.resized = false;
         }
 
         lastTime = time;
 
-        if (running) {
+        if (this.running) {
             util.requestAnimationFrame(step);
         }
     }.bind(this);
@@ -117,19 +102,21 @@ var run = function() {
     step(0);
 };
 
-var stop = function() {
-    running = false;
+Game.prototype.stop = function() {
+    this.running = false;
 
-    window.removeEventListener('resize', onResize);
+    window.removeEventListener('resize', this.onResize);
 };
 
-var onResize = function(e) {
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
-    resized = true;
+Game.prototype.onResize = function(e) {
+    var canvas = this.ctx.canvas;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    this.resized = true;
 };
 
-var draw = function() {
+Game.prototype.draw = function() {
+    var ctx = this.ctx;
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
 
@@ -139,37 +126,33 @@ var draw = function() {
 
     var scale = height / (viewbox.top - viewbox.bottom)
 
-    viewbox.left = Math.max(0, vehicle.chassis.p.x - (width / (3*scale)));
+    viewbox.left = Math.max(0, this.vehicle.chassis.p.x - (width / (3*scale)));
     viewbox.right = viewbox.left + width / scale;
 
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, width, height);
-    drawInfo();
+    this.drawInfo();
 
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(scale, -scale);
     ctx.translate(-viewbox.left, -viewbox.top);
 
-    vehicle.draw(ctx, viewbox);
-    terrain.draw(ctx, viewbox);
+    this.vehicle.draw(ctx, viewbox);
+    this.terrain.draw(ctx, viewbox);
 };
 
-var drawInfo = function() {
-    var fpsStr = Math.floor(fps * 10) / 10;
-    if (space.activeShapes.count === 0) {
+Game.prototype.drawInfo = function() {
+    var fpsStr = Math.floor(this.fps * 10) / 10;
+    if (this.space.activeShapes.count === 0) {
         fpsStr = '--';
     }
     document.getElementById('fps').textContent = ""+fpsStr;
-    document.getElementById('step').textContent = ""+space.stamp;
-    document.getElementById('simulationTime').textContent = ""+simulationTime+" ms";
-    document.getElementById('drawTime').textContent = ""+drawTime+" ms";
+    document.getElementById('step').textContent = ""+this.space.stamp;
+    document.getElementById('simulationTime').textContent = ""+this.simulationTime+" ms";
+    document.getElementById('drawTime').textContent = ""+this.drawTime+" ms";
 };
 
 module.exports = {
-    'run': run,
-    'stop': stop,
-    'onResize': onResize,
-    'draw': draw,
-    'drawInfo': drawInfo
+    'Game': Game
 };

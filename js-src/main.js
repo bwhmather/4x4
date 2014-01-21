@@ -1,4 +1,5 @@
 "use strict";
 
-var game = require('./game.js');
+var Game = require('./game.js').Game;
+var game = new Game();
 game.run();
