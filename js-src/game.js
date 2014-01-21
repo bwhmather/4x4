@@ -110,8 +110,8 @@ Game.prototype.stop = function() {
 
 Game.prototype.onResize = function(e) {
     var canvas = this.ctx.canvas;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
     this.resized = true;
 };
 
