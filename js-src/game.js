@@ -9,9 +9,8 @@ var Vehicle = require('./vehicle.js').Vehicle;
 var input = require('./input.js');
 var util = require('./util.js');
 
-var data = require('./data.js');
 
-var Game = function() {
+var Game = function(canvas, config) {
     /* Initialise Statistics */
     this.fps = 0;
     this.simulationTime = 0;
@@ -20,13 +19,11 @@ var Game = function() {
     /* Initialise Chipmunk Physics*/
     var space = this.space = new cp.Space();
     space.iterations = 10;
-    space.gravity = v(0, -200);
     space.sleepTimeThreshold = 0.5;
+    space.gravity = v(0, -config['gravity']);
 
 
     /* Initialise Rendering */
-    var canvas = document.getElementsByTagName('canvas')[0];
-
     canvas.oncontextmenu = function(e) { e.preventDefault(); }
     canvas.onmousedown = function(e) { e.preventDefault(); };
     canvas.onmouseup = function(e) { e.preventDefault(); };
@@ -38,8 +35,8 @@ var Game = function() {
     giantInvisibleWall.setElasticity(2);
     space.addShape(giantInvisibleWall);
 
-    this.vehicle = new Vehicle(space, data.landRover, v(100,100));
     this.terrain = new Terrain(space);
+    this.vehicle = new Vehicle(space, config['vehicle'], v(100,100));
 
     this.running = false;
     this.resized = false;
