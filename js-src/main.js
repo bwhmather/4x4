@@ -21,7 +21,7 @@ var Application = function(canvas, config) {
         ]
     }, this);
 
-    document.getElementById('play-btn').onclick = function() {this.start()}.bind(this);
+    document.getElementById('play-btn').onclick = function() {this.start();}.bind(this);
 
     this.lastTime = 0;
 
@@ -31,7 +31,7 @@ var Application = function(canvas, config) {
     this.fps = 0;
 
     /* Initialise Rendering */
-    canvas.oncontextmenu = function(e) { e.preventDefault(); }
+    canvas.oncontextmenu = function(e) { e.preventDefault(); };
     canvas.onmousedown = function(e) { e.preventDefault(); };
     canvas.onmouseup = function(e) { e.preventDefault(); };
 

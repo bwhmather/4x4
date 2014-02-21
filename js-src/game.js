@@ -64,7 +64,7 @@ Game.prototype.draw = function(ctx) {
     viewbox.bottom = -(40 + 40 + 40 + 30 + 10);
     viewbox.top = 2*(40 + 40 + 40 + 30 + 10);
 
-    var scale = height / (viewbox.top - viewbox.bottom)
+    var scale = height / (viewbox.top - viewbox.bottom);
 
     viewbox.left = Math.max(0, this.vehicle.chassis.p.x - (width / (3*scale)));
     viewbox.right = viewbox.left + width / scale;
