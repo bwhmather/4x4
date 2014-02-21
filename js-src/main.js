@@ -78,7 +78,7 @@ Application.prototype.update = function(time) {
     case 'game':
 
         var now = Date.now();
-        this.game.update(1/60);
+        this.game.update(Math.max(1/60, Math.min(0.001*dt, 1/30)));
         this.simulationTime += Date.now() - now;
 
         if (this.game.dirty || this.resized) {
