@@ -12,6 +12,12 @@ var Terrain = module.exports.Terrain = function(space) {
         { f: 1/310, a: 40 }
     ];
 
+    this.max = 0;
+    for (var i in this.components) {
+        this.max += Math.abs(this.components[i].a);
+    }
+    this.min = -this.max
+
     var a = v(0, this.getHeight(0));
     var b = v(0,0);
     for(var x=20; x<10000; x+=20) {
@@ -23,6 +29,7 @@ var Terrain = module.exports.Terrain = function(space) {
 
         a = b;
     }
+
 }
 
 Terrain.prototype.getHeight = function(x) {
