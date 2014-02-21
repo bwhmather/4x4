@@ -23,8 +23,11 @@ var Application = function(canvas, config) {
 
     document.getElementById('play-btn').onclick = function() {this.start()}.bind(this);
 
-    /* Initialise Statistics */
     this.lastTime = 0;
+
+    /* Initialise Statistics */
+    this.simulationTime = 0;
+    this.drawTime = 0;
     this.fps = 0;
 
     /* Initialise Rendering */
@@ -74,8 +77,16 @@ Application.prototype.update = function(time) {
     switch (this.current) {
     case 'game':
 
-        this.game.update(dt);
-        this.game.draw(this.ctx);
+        var now = Date.now();
+        this.game.update(1/60);
+        this.simulationTime += Date.now() - now;
+
+        if (this.game.dirty || this.resized) {
+            this.resized = false;
+            var now = Date.now();
+            this.game.draw(this.ctx);
+            this.drawTime += Date.now() - now;
+        }
 
         break;
     }
@@ -93,10 +104,10 @@ Application.prototype.resize = function() {
 
 Application.prototype.drawInfo = function() {
     var fpsStr = Math.floor(this.fps * 10) / 10;
-    document.getElementById('fps').textContent = "" + fpsStr;
-//    document.getElementById('step').textContent = ""+this.space.stamp;
-//    document.getElementById('simulationTime').textContent = ""+this.simulationTime+" ms";
-//    document.getElementById('drawTime').textContent = ""+this.drawTime+" ms";
+    document.getElementById('fps').textContent = ""+fpsStr;
+    document.getElementById('step').textContent = ""+this.game.space.stamp;
+    document.getElementById('simulationTime').textContent = ""+this.simulationTime+" ms";
+    document.getElementById('drawTime').textContent = ""+this.drawTime+" ms";
 };
 
 Application.prototype.onenterstate = function(event, from, to) {

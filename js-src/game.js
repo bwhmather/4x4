@@ -15,9 +15,6 @@ var util = require('./util.js');
 var Game = function(config) {
     this.config = config;
 
-    /* Initialise Statistics */
-    this.simulationTime = 0;
-    this.drawTime = 0;
 
     /* Initialise Chipmunk Physics*/
     var space = this.space = new cp.Space();
@@ -33,29 +30,14 @@ var Game = function(config) {
     this.terrain = new Terrain(space);
     this.vehicle = new Vehicle(space, config['vehicle'], v(100,100));
 
-    this.resized = false;
+    this.dirty = true;
 
     input.init();
 };
 
-Game.prototype.requestUpdate = function() {
-    if (!this.updateQueued) {
-        this.updateQueued = true;
-        util.requestAnimationFrame(this.update.bind(this));
-    }
-}
-
-Game.prototype.loop = function() {
-    switch (this.current) {
-    case 'game':
-        this.requestUpdate();
-        break;
-    }
-}
-
 Game.prototype.update = function(dt) {
 
-    // Handle Input
+    /* Handle Input */
     if (input.rightPressed() && !input.leftPressed()) {
         this.vehicle.setThrottle(1);
     } else if (input.leftPressed() && !input.rightPressed()) {
@@ -64,17 +46,20 @@ Game.prototype.update = function(dt) {
         this.vehicle.setThrottle(0);
     }
 
-    // Run Physics
-    var now = Date.now();
-    this.space.step(1/60);
-    this.simulationTime += Date.now() - now;
+    /* Run Physics */
+    this.space.step(dt);
 
+    if (this.space.activeShapes.count) {
+        this.dirty = true;
+    }
 }
 
 Game.prototype.draw = function(ctx) {
+
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
 
+    /* Figure out where to position the camera */
     var viewbox = {};
     viewbox.bottom = -(40 + 40 + 40 + 30 + 10);
     viewbox.top = 2*(40 + 40 + 40 + 30 + 10);
@@ -84,15 +69,19 @@ Game.prototype.draw = function(ctx) {
     viewbox.left = Math.max(0, this.vehicle.chassis.p.x - (width / (3*scale)));
     viewbox.right = viewbox.left + width / scale;
 
+    /* Clear the screen */
     ctx.setTransform(1,0,0,1,0,0);
     ctx.clearRect(0, 0, width, height);
 
+    /* Draw everything */
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(scale, -scale);
     ctx.translate(-viewbox.left, -viewbox.top);
 
     this.vehicle.draw(ctx, viewbox);
     this.terrain.draw(ctx, viewbox);
+
+    this.dirty = false;
 };
 
 module.exports = {
