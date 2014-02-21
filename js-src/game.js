@@ -1,5 +1,7 @@
 "use strict";
 
+var StateMachine = require('./lib/state-machine.js');
+
 var cp = require('./lib/cp.js');
 var v = cp.v;
 
@@ -11,7 +13,22 @@ var util = require('./util.js');
 
 
 var Game = function(canvas, config) {
+
+    StateMachine.create({
+        initial: 'loading',
+        events: [
+            { name: 'loaded', from: 'loading', to: 'mainMenu' },
+            { name: 'start', from: 'mainMenu', to: 'game' },
+            { name: 'pause', from: 'game', to: 'paused' },
+            { name: 'resume', from: 'paused', to: 'game' },
+            { name: 'crashed', from: 'game', to: 'mainMenu' }
+      ]
+    }, this);
+
+    document.getElementById('play-btn').onclick = function() {this.start()}.bind(this);
+
     /* Initialise Statistics */
+    this.lastTime = 0;
     this.fps = 0;
     this.simulationTime = 0;
     this.drawTime = 0;
@@ -30,6 +47,14 @@ var Game = function(canvas, config) {
 
     this.ctx = canvas.getContext('2d');
 
+    /* Bind callback to resize canvas */
+    if (!this.hasOwnProperty('resize')) {
+        this.resize = this.resize.bind(this);
+    }
+    window.addEventListener('resize', this.resize);
+    this.resize();
+
+
     /* Build Scene */
     var giantInvisibleWall = new cp.SegmentShape(space.staticBody, v(0, -10000), v(0, 10000), 0);
     giantInvisibleWall.setElasticity(2);
@@ -40,25 +65,30 @@ var Game = function(canvas, config) {
 
     this.running = false;
     this.resized = false;
+
+    this.loaded();
 };
 
-Game.prototype.run = function() {
-    if (!this.hasOwnProperty('resize')) {
-        this.resize = this.resize.bind(this);
+Game.prototype.requestUpdate = function() {
+    if (!this.updateQueued) {
+        this.updateQueued = true;
+        util.requestAnimationFrame(this.update.bind(this));
     }
-    window.addEventListener('resize', this.resize);
-    this.resize();
+}
 
-    input.init();
-
-    if (this.running) {
-        throw "already running";
+Game.prototype.loop = function() {
+    switch (this.current) {
+    case 'game':
+        this.requestUpdate();
+        break;
     }
-    this.running = true;
+}
 
-    var lastTime = 0;
-    var step = function(time) {
-        var dt = time - lastTime;
+Game.prototype.update = function(time) {
+    this.updateQueued = false;
+    switch (this.current) {
+    case 'game':
+        var dt = time - this.lastTime;
 
         // Update FPS
         if(dt > 0) {
@@ -89,15 +119,34 @@ Game.prototype.run = function() {
             this.resized = false;
         }
 
-        lastTime = time;
+        this.lastTime = time;
+        break;
+    }
 
-        if (this.running) {
-            util.requestAnimationFrame(step);
-        }
-    }.bind(this);
+    this.loop();
+}
 
-    step(0);
+
+Game.prototype.onenterstate = function(event, from, to) {
+
+}
+
+
+Game.prototype.onentergame = function(event, from, to) {
+    this.requestUpdate();
 };
+
+
+
+Game.prototype.gameOver = function() {
+  if (this.ongameover) {
+    this.ongameover();
+  }
+}
+
+Game.prototype.reset = function() {
+
+}
 
 Game.prototype.stop = function() {
     this.running = false;
