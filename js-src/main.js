@@ -24,4 +24,16 @@ var fsm = StateMachine.create({
 
 document.getElementById('play-btn').onclick = function() {fsm.start()};
 
+
+var onEnterMenu = function(event, from, to) {
+  document.getElementById(to).style.display = 'table';
+};
+
+var onExitMenu = function(event, from, to) {
+  document.getElementById(from).style.display = 'none';
+};
+
+fsm.onentermainMenu = onEnterMenu;
+fsm.onleavemainMenu = onExitMenu;
+
 fsm.loaded();
