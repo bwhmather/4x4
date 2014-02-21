@@ -62,7 +62,7 @@ Game.prototype.draw = function(ctx) {
     /* Figure out where to position the camera */
     var viewbox = {};
     viewbox.bottom = this.terrain.min;
-    viewbox.top = 1.8*(this.terrain.max - this.terrain.min) + this.terrain.min;
+    viewbox.top = 2*(this.terrain.max - this.terrain.min) + this.terrain.min;
 
     var scale = height / (viewbox.top - viewbox.bottom);
 
