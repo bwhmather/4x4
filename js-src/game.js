@@ -43,11 +43,11 @@ var Game = function(canvas, config) {
 };
 
 Game.prototype.run = function() {
-    if (!this.hasOwnProperty('onResize')) {
-        this.onResize = this.onResize.bind(this);
+    if (!this.hasOwnProperty('resize')) {
+        this.resize = this.resize.bind(this);
     }
-    window.addEventListener('resize', this.onResize);
-    this.onResize();
+    window.addEventListener('resize', this.resize);
+    this.resize();
 
     input.init();
 
@@ -102,10 +102,10 @@ Game.prototype.run = function() {
 Game.prototype.stop = function() {
     this.running = false;
 
-    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('resize', this.resize);
 };
 
-Game.prototype.onResize = function(e) {
+Game.prototype.resize = function() {
     var canvas = this.ctx.canvas;
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
