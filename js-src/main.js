@@ -53,7 +53,7 @@ Application.prototype.requestUpdate = function() {
         this.updateQueued = true;
         util.requestAnimationFrame(this.update.bind(this));
     }
-}
+};
 
 Application.prototype.loop = function() {
     switch (this.current) {
@@ -61,7 +61,7 @@ Application.prototype.loop = function() {
         this.requestUpdate();
         break;
     }
-}
+};
 
 Application.prototype.update = function(time) {
     this.updateQueued = false;
@@ -93,7 +93,7 @@ Application.prototype.update = function(time) {
     this.drawInfo();
 
     this.loop();
-}
+};
 
 Application.prototype.resize = function() {
     var canvas = this.ctx.canvas;
@@ -112,19 +112,19 @@ Application.prototype.drawInfo = function() {
 
 Application.prototype.onenterstate = function(event, from, to) {
     this.loop();
-}
+};
 
 Application.prototype.onentermainMenu = function(event, from, to) {
     document.getElementById('main-menu').classList.remove('hidden');
-}
+};
 
 Application.prototype.onleavemainMenu = function(event, from, to) {
     document.getElementById('main-menu').classList.add('hidden');
-}
+};
 
 Application.prototype.onbeforestart = function(event, from, to) {
     this.game = new Game(data);
-}
+};
 
 
 var canvas = document.getElementsByTagName('canvas')[0];
