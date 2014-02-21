@@ -32,14 +32,6 @@ var Game = function(canvas, config) {
     this.fps = 0;
     this.simulationTime = 0;
     this.drawTime = 0;
-
-    /* Initialise Chipmunk Physics*/
-    var space = this.space = new cp.Space();
-    space.iterations = 10;
-    space.sleepTimeThreshold = 0.5;
-    space.gravity = v(0, -config['gravity']);
-
-
     /* Initialise Rendering */
     canvas.oncontextmenu = function(e) { e.preventDefault(); }
     canvas.onmousedown = function(e) { e.preventDefault(); };
@@ -51,9 +43,15 @@ var Game = function(canvas, config) {
     if (!this.hasOwnProperty('resize')) {
         this.resize = this.resize.bind(this);
     }
+    // TODO bind to canvas resize event not windo resize event
     window.addEventListener('resize', this.resize);
     this.resize();
 
+    /* Initialise Chipmunk Physics*/
+    var space = this.space = new cp.Space();
+    space.iterations = 10;
+    space.sleepTimeThreshold = 0.5;
+    space.gravity = v(0, -config['gravity']);
 
     /* Build Scene */
     var giantInvisibleWall = new cp.SegmentShape(space.staticBody, v(0, -10000), v(0, 10000), 0);
@@ -65,6 +63,8 @@ var Game = function(canvas, config) {
 
     this.running = false;
     this.resized = false;
+
+    input.init();
 
     this.loaded();
 };
@@ -127,33 +127,6 @@ Game.prototype.update = function(time) {
 }
 
 
-Game.prototype.onenterstate = function(event, from, to) {
-
-}
-
-
-Game.prototype.onentergame = function(event, from, to) {
-    this.requestUpdate();
-};
-
-
-
-Game.prototype.gameOver = function() {
-  if (this.ongameover) {
-    this.ongameover();
-  }
-}
-
-Game.prototype.reset = function() {
-
-}
-
-Game.prototype.stop = function() {
-    this.running = false;
-
-    window.removeEventListener('resize', this.resize);
-};
-
 Game.prototype.resize = function() {
     var canvas = this.ctx.canvas;
     canvas.width = canvas.offsetWidth;
@@ -198,6 +171,19 @@ Game.prototype.drawInfo = function() {
     document.getElementById('simulationTime').textContent = ""+this.simulationTime+" ms";
     document.getElementById('drawTime').textContent = ""+this.drawTime+" ms";
 };
+
+Game.prototype.onenterstate = function(event, from, to) {
+    this.loop();
+}
+
+Game.prototype.onentermainMenu = function(event, from, to) {
+  document.getElementById('main-menu').classList.remove('hidden');
+}
+
+Game.prototype.onleavemainMenu = function(event, from, to) {
+  document.getElementById('main-menu').classList.add('hidden');
+}
+
 
 module.exports = {
     'Game': Game

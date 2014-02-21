@@ -13,6 +13,10 @@ canvas {
     image-rendering: optimizeSpeed;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .menu-outer {
     position: fixed;
     width: 100%;
