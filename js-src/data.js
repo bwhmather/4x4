@@ -9,7 +9,7 @@ module.exports = {
 
         "image": "",
         "image_scale": 85/256,
-        "image_offset": v(-128, 56),
+        "image_offset": v(-128, 75),
 
         "body_outline": [
            1,-48,
@@ -21,7 +21,7 @@ module.exports = {
            1,-84
         ],
         "body_outline_scale": 85/256,
-        "body_outline_offset": v(-128, 56),
+        "body_outline_offset": v(-128, 75),
 
         "cab_outline": [
            72,-48,
@@ -30,7 +30,7 @@ module.exports = {
            165,-48
         ],
         "cab_outline_scale": 85/256,
-        "cab_outline_offset": v(-128, 56),
+        "cab_outline_offset": v(-128, 75),
 
         "front_wheel": {
             "mass": 0.15,
@@ -40,9 +40,9 @@ module.exports = {
         "front_suspension": {
             "stiffness": 450,
             "damping": 12,
-            "spring_anchor": v(30, 0),
-            "spring_length": 25,
-            "arm_anchor": v(0, -20)
+            "spring_anchor": v(30, 10),
+            "spring_length": 28,
+            "arm_anchor": v(0, -10)
         },
         "front_motor": {
            "torque":7500,
@@ -57,9 +57,9 @@ module.exports = {
         "back_suspension": {
             "stiffness": 450,
             "damping": 12,
-            "spring_anchor": v(-30, 0),
-            "spring_length": 25,
-            "arm_anchor": v(0, -20)
+            "spring_anchor": v(-30, 10),
+            "spring_length": 28,
+            "arm_anchor": v(0, -10)
         },
         "back_motor": {
            "torque": 7500,
