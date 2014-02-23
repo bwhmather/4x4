@@ -5,19 +5,32 @@ var v = require('./lib/cp.js').v;
 module.exports = {
     "gravity": 200,
     "vehicle": {
-        "chassis": {
-            "mass": 5,
-            "width": 80,
-            "height": 20,
+        "mass": 5,
 
-            "cab": {
-                "bottom": 22,
-                "lead": 8,
-                "top": 14,
-                "front": 25,
-                "height":17
-            }
-        },
+        "image": "",
+        "image_scale": 85/256,
+        "image_offset": v(-128, 56),
+
+        "body_outline": [
+           1,-48,
+           165,-48,
+           240,-51,
+           248,-84,
+           155,-106,
+           92,-107,
+           1,-84
+        ],
+        "body_outline_scale": 85/256,
+        "body_outline_offset": v(-128, 56),
+
+        "cab_outline": [
+           72,-48,
+           91,-3,
+           146,-12,
+           165,-48
+        ],
+        "cab_outline_scale": 85/256,
+        "cab_outline_offset": v(-128, 56),
 
         "front_wheel": {
             "mass": 0.15,
@@ -27,9 +40,9 @@ module.exports = {
         "front_suspension": {
             "stiffness": 450,
             "damping": 12,
-            "spring_anchor": v(30, 5),
-            "spring_length": 20,
-            "arm_anchor": v(0, -10)
+            "spring_anchor": v(30, 0),
+            "spring_length": 25,
+            "arm_anchor": v(0, -20)
         },
         "front_motor": {
            "torque":7500,
@@ -44,9 +57,9 @@ module.exports = {
         "back_suspension": {
             "stiffness": 450,
             "damping": 12,
-            "spring_anchor": v(-30, 5),
-            "spring_length": 20,
-            "arm_anchor": v(0, -10)
+            "spring_anchor": v(-30, 0),
+            "spring_length": 25,
+            "arm_anchor": v(0, -20)
         },
         "back_motor": {
            "torque": 7500,

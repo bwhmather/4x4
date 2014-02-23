@@ -43,25 +43,26 @@ var Vehicle = module.exports.Vehicle = function(space, spec, offset) {
     var makeChassis = function(space, spec) {
         var body = new cp.Body(
             spec.mass,
-            cp.momentForBox(spec.mass, spec.width, spec.height)
+            cp.momentForBox(spec.mass, 80, 40)
         );
         space.addBody(body);
 
-        var bodyShape = new cp.BoxShape(body, spec.width, spec.height);
+        var bodyShape = new cp.PolyShape(
+            body,
+            spec.body_outline.map(function(c) {
+                return c * spec.body_outline_scale;
+            }),
+            spec.body_outline_offset.mult(spec.body_outline_scale));
         bodyShape.setFriction(1.2);
         bodyShape.group = 1;
         space.addShape(bodyShape);
 
         var cabShape = new cp.PolyShape(
             body,
-            [
-                0, 0,
-                -spec.cab.bottom, 0,
-                -spec.cab.top - spec.cab.lead, spec.cab.height,
-                -spec.cab.lead, spec.cab.height
-            ],
-            v(spec.width / 2 - spec.cab.front, spec.height / 2)
-        );
+            spec.cab_outline.map(function(c) {
+                return c * spec.cab_outline_scale;
+            }),
+            spec.cab_outline_offset.mult(spec.body_outline_scale));
         cabShape.setFriction(1.2);
         cabShape.group = 1;
         space.addShape(cabShape);
@@ -88,7 +89,7 @@ var Vehicle = module.exports.Vehicle = function(space, spec, offset) {
     };
 
 
-    this.chassis = makeChassis(space, spec.chassis);
+    this.chassis = makeChassis(space, spec);
     this.chassis.setPos(offset);
 
     this.frontWheel = new Wheel(space, spec.front_wheel);
@@ -136,10 +137,13 @@ Vehicle.prototype.draw = function(ctx, viewbox) {
     ctx.translate(p.x, p.y);
     ctx.rotate(this.chassis.a);
 
+    ctx.scale(spec.image_scale, spec.image_scale);
+    ctx.translate(spec.image_offset.x, spec.image_offset.y);
+
     ctx.scale(1, -1);
-    ctx.drawImage(this.bodyImage,
-        -0.55*spec.chassis.width, -0.55*spec.chassis.height - 1.1*spec.chassis.cab.height,
-        1.1*spec.chassis.width, 1.1*(spec.chassis.height + spec.chassis.cab.height));
+    ctx.drawImage(this.bodyImage, 0, 0);
+//        -0.55*spec.chassis.width, -0.55*spec.chassis.height - 1.1*spec.chassis.cab.height,
+//        1.1*spec.chassis.width, 1.1*(spec.chassis.height + spec.chassis.cab.height));
     ctx.restore();
 
     this.frontWheel.draw(ctx, viewbox);
