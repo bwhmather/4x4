@@ -43,19 +43,12 @@ Terrain.prototype.getHeight = function(x) {
 }
 
 
-Terrain.prototype.drawFill = function(ctx, box) {
-
-    if (!this.groundImage) {
-        this.groundImage = document.getElementById('groundImage');
-    }
-    if (!this.groundPattern) {
-        this.groundPattern = ctx.createPattern(this.groundImage, 'repeat');
-    }
+Terrain.prototype.drawFill = function(ctx, box, res) {
 
     var step = 20;
 
     ctx.save();
-    ctx.fillStyle = this.groundPattern;
+    ctx.fillStyle = ctx.createPattern(res.get('ground'), 'repeat');
     ctx.beginPath();
 
     ctx.moveTo(box.left, box.bottom);
@@ -67,15 +60,8 @@ Terrain.prototype.drawFill = function(ctx, box) {
     ctx.restore();
 };
 
-Terrain.prototype.drawBorder = function(ctx, box) {
-    if (!this.borderImage) {
-        this.borderImage = document.getElementById('borderImage');
-    }
-    if (!this.borderPattern) {
-        this.borderPattern = ctx.createPattern(this.borderImage, 'repeat');
-    }
-
-    var borderImage = this.borderImage;
+Terrain.prototype.drawBorder = function(ctx, box, res) {
+    var borderImage = res.get('border');
     var borderHeight = 24;
     var borderScale = borderHeight / borderImage.height;
     var borderRepeat = borderImage.width * borderScale;
@@ -120,7 +106,7 @@ Terrain.prototype.drawBorder = function(ctx, box) {
     }
 };
 
-Terrain.prototype.draw = function(ctx, box) {
-    this.drawFill(ctx, box);
-    this.drawBorder(ctx, box);
+Terrain.prototype.draw = function(ctx, box, res) {
+    this.drawFill(ctx, box, res);
+    this.drawBorder(ctx, box, res);
 };

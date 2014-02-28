@@ -6,6 +6,7 @@ var Game = require('./game.js').Game;
 var data = require('./data.js');
 
 var util = require('./util.js');
+var resources = require('./resources.js');
 
 
 var Application = function(canvas, config) {
@@ -45,7 +46,14 @@ var Application = function(canvas, config) {
     window.addEventListener('resize', this.resize);
     this.resize();
 
-    this.loaded();
+    this.textureManager = new resources.TextureManager({
+        'wheel': 'img/wheel.png',
+        'body': 'img/body.png',
+        'ground': 'img/ground.png',
+        'border': 'img/border.png'
+    });
+
+    this.textureManager.onLoad = this.loaded.bind(this);
 };
 
 Application.prototype.requestUpdate = function() {
@@ -84,7 +92,7 @@ Application.prototype.update = function(time) {
         if (this.game.dirty || this.resized) {
             this.resized = false;
             var now = Date.now();
-            this.game.draw(this.ctx);
+            this.game.draw(this.ctx, this.textureManager);
             this.drawTime += Date.now() - now;
         }
 

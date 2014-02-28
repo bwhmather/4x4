@@ -18,20 +18,18 @@ var Wheel = function(space, spec) {
     shape.setFriction(spec.friction);
     shape.group = 1;
     space.addShape(shape);
-
-    this.image = document.getElementById('wheelImage');
 };
 
 Wheel.prototype = Object.create(cp.Body.prototype);
 
-Wheel.prototype.draw = function(ctx, viewbox) {
+Wheel.prototype.draw = function(ctx, viewbox, res) {
     var r = this.spec.radius;
 
     ctx.save();
     ctx.translate(this.p.x, this.p.y);
     ctx.rotate(this.a);
     ctx.scale(1, -1);
-    ctx.drawImage(this.image, -r, -r, 2*r, 2*r);
+    ctx.drawImage(res.get('wheel'), -r, -r, 2*r, 2*r);
     ctx.restore();
 
 };
@@ -110,8 +108,6 @@ var Vehicle = module.exports.Vehicle = function(space, spec, offset) {
     this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);
     this.differential.maxForce = spec.differential.torque;
     space.addConstraint(this.differential);
-
-    this.bodyImage = document.getElementById('bodyImage');
 };
 
 Vehicle.prototype.setThrottle = function(throttle) {
@@ -129,7 +125,7 @@ Vehicle.prototype.setThrottle = function(throttle) {
     }
 };
 
-Vehicle.prototype.draw = function(ctx, viewbox) {
+Vehicle.prototype.draw = function(ctx, viewbox, res) {
     var spec = this.spec;
 
     ctx.save();
@@ -141,11 +137,9 @@ Vehicle.prototype.draw = function(ctx, viewbox) {
     ctx.translate(spec.image_offset.x, spec.image_offset.y);
 
     ctx.scale(1, -1);
-    ctx.drawImage(this.bodyImage, 0, 0);
-//        -0.55*spec.chassis.width, -0.55*spec.chassis.height - 1.1*spec.chassis.cab.height,
-//        1.1*spec.chassis.width, 1.1*(spec.chassis.height + spec.chassis.cab.height));
+    ctx.drawImage(res.get('body'), 0, 0);
     ctx.restore();
 
-    this.frontWheel.draw(ctx, viewbox);
-    this.backWheel.draw(ctx, viewbox);
+    this.frontWheel.draw(ctx, viewbox, res);
+    this.backWheel.draw(ctx, viewbox, res);
 };

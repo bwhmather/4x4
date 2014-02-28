@@ -54,7 +54,7 @@ Game.prototype.update = function(dt) {
     }
 };
 
-Game.prototype.draw = function(ctx) {
+Game.prototype.draw = function(ctx, res) {
 
     var width = ctx.canvas.width;
     var height = ctx.canvas.height;
@@ -78,8 +78,8 @@ Game.prototype.draw = function(ctx) {
     ctx.scale(scale, -scale);
     ctx.translate(-viewbox.left, -viewbox.top);
 
-    this.vehicle.draw(ctx, viewbox);
-    this.terrain.draw(ctx, viewbox);
+    this.vehicle.draw(ctx, viewbox, res);
+    this.terrain.draw(ctx, viewbox, res);
 
     this.dirty = false;
 };
