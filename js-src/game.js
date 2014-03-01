@@ -15,7 +15,6 @@ var util = require('./util.js');
 var Game = function(config) {
     this.config = config;
 
-
     /* Initialise Chipmunk Physics*/
     var space = this.space = new cp.Space();
     space.iterations = 10;
@@ -35,8 +34,8 @@ var Game = function(config) {
     input.init();
 };
 
-Game.prototype.update = function(dt) {
 
+Game.prototype.update = function(dt) {
     /* Handle Input */
     if (input.rightPressed() && !input.leftPressed()) {
         this.vehicle.setThrottle(1);
@@ -53,6 +52,7 @@ Game.prototype.update = function(dt) {
         this.dirty = true;
     }
 };
+
 
 Game.prototype.draw = function(ctx, res) {
 
@@ -83,6 +83,7 @@ Game.prototype.draw = function(ctx, res) {
 
     this.dirty = false;
 };
+
 
 module.exports = {
     'Game': Game

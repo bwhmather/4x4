@@ -3,6 +3,7 @@
 var cp = require('./lib/cp.js');
 var v = cp.v;
 
+
 var Wheel = function(space, spec) {
     this.spec = spec;
 
@@ -22,6 +23,7 @@ var Wheel = function(space, spec) {
 
 Wheel.prototype = Object.create(cp.Body.prototype);
 
+
 Wheel.prototype.draw = function(ctx, viewbox, res) {
     var r = this.spec.radius;
 
@@ -35,7 +37,7 @@ Wheel.prototype.draw = function(ctx, viewbox, res) {
 };
 
 
-var Vehicle = module.exports.Vehicle = function(space, spec, offset) {
+var Vehicle = function(space, spec, offset) {
     this.spec = spec;
 
     var makeChassis = function(space, spec) {
@@ -86,7 +88,6 @@ var Vehicle = module.exports.Vehicle = function(space, spec, offset) {
         space.addConstraint(spring);
     };
 
-
     this.chassis = makeChassis(space, spec);
     this.chassis.setPos(offset);
 
@@ -110,6 +111,7 @@ var Vehicle = module.exports.Vehicle = function(space, spec, offset) {
     space.addConstraint(this.differential);
 };
 
+
 Vehicle.prototype.setThrottle = function(throttle) {
     var spec = this.spec;
 
@@ -124,6 +126,7 @@ Vehicle.prototype.setThrottle = function(throttle) {
         this.backMotor.activateBodies();
     }
 };
+
 
 Vehicle.prototype.draw = function(ctx, viewbox, res) {
     var spec = this.spec;
@@ -142,4 +145,9 @@ Vehicle.prototype.draw = function(ctx, viewbox, res) {
 
     this.frontWheel.draw(ctx, viewbox, res);
     this.backWheel.draw(ctx, viewbox, res);
+};
+
+
+module.exports = {
+    'Vehicle': Vehicle
 };

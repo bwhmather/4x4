@@ -3,6 +3,7 @@
 var rightPressed = false;
 var leftPressed = false;
 
+
 var onKeyDown = function(e) {
     if (e.keyCode === 39) {
         rightPressed = true;
@@ -12,6 +13,7 @@ var onKeyDown = function(e) {
         return false;
     }
 };
+
 var onKeyUp = function(e) {
     if (e.keyCode === 39) {
         rightPressed = false;
@@ -22,27 +24,32 @@ var onKeyUp = function(e) {
     }
 };
 
+
 var leftPedalDown = function(e) {
     leftPressed = true;
     e.preventDefault();
     return false;
 };
+
 var leftPedalUp = function(e) {
     leftPressed = false;
     e.preventDefault();
     return false;
 };
 
+
 var rightPedalDown = function(e) {
     rightPressed = true;
     e.preventDefault();
     return false;
 };
+
 var rightPedalUp = function(e) {
     rightPressed = false;
     e.preventDefault();
     return false;
-}
+};
+
 
 var init = function() {
     // Keyboard
@@ -65,7 +72,7 @@ var init = function() {
         rightPedal.addEventListener('touchleave', rightPedalUp);
         rightPedal.addEventListener('touchend', rightPedalUp);
     };
-}
+};
 
 
 module.exports = {

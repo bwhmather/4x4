@@ -18,6 +18,7 @@ var TextureManager = function(textures) {
     };
 };
 
+
 TextureManager.prototype.textureLoaded = function(name) {
     this.remaining--;
 
@@ -30,11 +31,12 @@ TextureManager.prototype.textureLoaded = function(name) {
     }
 };
 
+
 TextureManager.prototype.get = function (name) {
     return this.textures[name];
-}
+};
 
 
 module.exports = {
     'TextureManager': TextureManager
-}
+};

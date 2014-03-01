@@ -3,7 +3,8 @@
 var cp = require('./lib/cp.js');
 var v = cp.v;
 
-var Terrain = module.exports.Terrain = function(space) {
+
+var Terrain = function(space) {
     this.components = [
         { f: 1/30, a: 10 },
         { f: 1/70, a: 30 },
@@ -29,8 +30,8 @@ var Terrain = module.exports.Terrain = function(space) {
 
         a = b;
     }
+};
 
-}
 
 Terrain.prototype.getHeight = function(x) {
     var height = 0;
@@ -40,7 +41,7 @@ Terrain.prototype.getHeight = function(x) {
         }
     }
     return height;
-}
+};
 
 
 Terrain.prototype.drawFill = function(ctx, box, res) {
@@ -59,6 +60,7 @@ Terrain.prototype.drawFill = function(ctx, box, res) {
     ctx.fill();
     ctx.restore();
 };
+
 
 Terrain.prototype.drawBorder = function(ctx, box, res) {
     var borderImage = res.get('border');
@@ -106,7 +108,13 @@ Terrain.prototype.drawBorder = function(ctx, box, res) {
     }
 };
 
+
 Terrain.prototype.draw = function(ctx, box, res) {
     this.drawFill(ctx, box, res);
     this.drawBorder(ctx, box, res);
+};
+
+
+module.exports = {
+    'Terrain': Terrain
 };
