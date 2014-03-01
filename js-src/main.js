@@ -133,6 +133,9 @@ Application.prototype.onleavemainMenu = function(event, from, to) {
 
 Application.prototype.onbeforestart = function(event, from, to) {
     this.game = new Game(data);
+    this.game.onCrashed = function() {
+        this.crashed();
+    }.bind(this);
 };
 
 

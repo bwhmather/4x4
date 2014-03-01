@@ -45,11 +45,22 @@ Game.prototype.update = function(dt) {
         this.vehicle.setThrottle(0);
     }
 
+    if (this.vehicle.isCrashed()) {
+        this.crashed();
+    }
+
     /* Run Physics */
     this.space.step(dt);
 
     if (this.space.activeShapes.count) {
         this.dirty = true;
+    }
+};
+
+
+Game.prototype.crashed = function() {
+    if (this.onCrashed) {
+        this.onCrashed();
     }
 };
 
