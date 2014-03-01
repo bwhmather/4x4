@@ -74,6 +74,7 @@ Application.prototype.loop = function() {
 Application.prototype.update = function(time) {
     this.updateQueued = false;
 
+    var now;
     var dt = time - this.lastTime;
     this.lastTime = time;
 
@@ -85,13 +86,13 @@ Application.prototype.update = function(time) {
     switch (this.current) {
     case 'game':
 
-        var now = Date.now();
+        now = Date.now();
         this.game.update(Math.max(1/60, Math.min(0.001*dt, 1/30)));
         this.simulationTime += Date.now() - now;
 
         if (this.game.dirty || this.resized) {
             this.resized = false;
-            var now = Date.now();
+            now = Date.now();
             this.game.draw(this.ctx, this.textureManager);
             this.drawTime += Date.now() - now;
         }

@@ -71,7 +71,7 @@ var init = function() {
         rightPedal.addEventListener('touchstart', rightPedalDown);
         rightPedal.addEventListener('touchleave', rightPedalUp);
         rightPedal.addEventListener('touchend', rightPedalUp);
-    };
+    }
 };
 
 

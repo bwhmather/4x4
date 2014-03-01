@@ -1,7 +1,7 @@
 "use strict";
 
 var TextureManager = function(textures) {
-    var image;
+    var image, name;
     this.textures = Object.create(null);
 
     this.total = 0;
@@ -9,13 +9,13 @@ var TextureManager = function(textures) {
 
     // XXX just going to assume that iterating over keys is fine...
     for (name in textures) {
-        this.total++
+        this.total++;
         this.remaining++;
         image = new Image();
         image.onload = this.textureLoaded.bind(this);
         image.src = textures[name];
         this.textures[name] = image;
-    };
+    }
 };
 
 

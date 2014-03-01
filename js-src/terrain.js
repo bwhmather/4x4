@@ -17,7 +17,7 @@ var Terrain = function(space) {
     for (var i in this.components) {
         this.max += Math.abs(this.components[i].a);
     }
-    this.min = -this.max
+    this.min = -this.max;
 
     var a = v(0, this.getHeight(0));
     var b = v(0,0);
@@ -91,7 +91,9 @@ Terrain.prototype.drawBorder = function(ctx, box, res) {
 
             var imageStart = Math.floor((canvasStart / borderScale) % borderImage.width);
             var imageWidth = Math.ceil(canvasWidth / borderScale);
-            if (!imageWidth) {break}
+            if (!imageWidth) {
+                break;
+            }
 
             ctx.drawImage(borderImage,
                 imageStart, 0,
