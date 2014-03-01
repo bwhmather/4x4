@@ -115,15 +115,21 @@ var Vehicle = function(space, spec, offset) {
 Vehicle.prototype.setThrottle = function(throttle) {
     var spec = this.spec;
 
-    this.frontMotor.rate = (throttle < 0 ? -1 : 1) * spec.front_motor.rate;
-    this.frontMotor.maxForce = Math.abs(throttle) * spec.front_motor.torque;
+    if (throttle) {
+        this.frontMotor.rate = (throttle < 0 ? -1 : 1) * spec.front_motor.rate;
+        this.frontMotor.maxForce = Math.abs(throttle) * spec.front_motor.torque;
 
-    this.backMotor.rate = (throttle < 0 ? -1 : 1) * spec.back_motor.rate;
-    this.backMotor.maxForce = Math.abs(throttle) * spec.back_motor.torque;
+        this.backMotor.rate = (throttle < 0 ? -1 : 1) * spec.back_motor.rate;
+        this.backMotor.maxForce = Math.abs(throttle) * spec.back_motor.torque;
 
-    if (throttle !== 0) {
         this.frontMotor.activateBodies();
         this.backMotor.activateBodies();
+    } else {
+        this.frontMotor.rate = 0;
+        this.frontMotor.maxForce = 0.03 * spec.front_motor.torque;
+
+        this.backMotor.rate = 0;
+        this.backMotor.maxForce = 0.03 * spec.back_motor.torque;
     }
 };
 
