@@ -52,7 +52,7 @@ var Vehicle = function(space, spec, offset) {
             spec.body_outline.map(function(c) {
                 return c * spec.body_outline_scale;
             }),
-            spec.body_outline_offset.mult(spec.body_outline_scale));
+            v.mult(spec.body_outline_offset, spec.body_outline_scale));
         bodyShape.setFriction(1.2);
         bodyShape.group = 1;
         space.addShape(bodyShape);
@@ -62,7 +62,7 @@ var Vehicle = function(space, spec, offset) {
             spec.cab_outline.map(function(c) {
                 return c * spec.cab_outline_scale;
             }),
-            spec.cab_outline_offset.mult(spec.body_outline_scale));
+            v.mult(spec.cab_outline_offset, spec.body_outline_scale));
         cabShape.setFriction(1.2);
         cabShape.group = 1;
         space.addShape(cabShape);
