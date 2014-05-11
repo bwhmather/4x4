@@ -40,6 +40,7 @@ Terrain.prototype.getHeight = function(x) {
             height += this.components[i].a * Math.sin((x-200) * this.components[i].f);
         }
     }
+    height = (Math.pow(height - this.min, 2) / (this.max - this.min)) + this.min;
     return height;
 };
 
