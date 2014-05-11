@@ -49,12 +49,13 @@ Game.prototype.update = function(dt) {
         this.crashed();
     }
 
+    this.terrain.updateBounds(this.vehicle.chassis.p.x - 100, this.vehicle.chassis.p.x + 100);
+
     /* Run Physics */
     this.space.step(dt);
 
     if (this.space.activeShapes.count) {
         this.dirty = true;
-        this.terrain.updateBounds(this.vehicle.chassis.p.x - 100, this.vehicle.chassis.p.x + 100);
     }
 };
 

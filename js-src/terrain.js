@@ -22,8 +22,6 @@ var Terrain = function(space) {
     this.min = -this.max;
 
     this.shapes = [];
-
-    this.updateBounds(0, 10000);
 };
 
 
@@ -40,29 +38,90 @@ Terrain.prototype.getHeight = function(x) {
 
 
 Terrain.prototype.updateBounds = function(left, right) {
-    var space = this.space;
-
-    for (var i = 0; i<this.shapes.length; i++) {
-        space.removeShape(this.shapes[i]);
-    }
-    this.shapes = [];
+    var added_left=0, removed_left=0, added_right=0, removed_right = 0;
 
     var step = 20;
 
-    var start = left - (left % step) - step;
-    var a = v(start, this.getHeight(start));
-    var b;
-    for (var x=start + step; x<right; x+=step) {
-        b = v(x, this.getHeight(x));
+    var space = this.space;
+    var shapes = this.shapes;
+    var shape;
 
+    var start, end;
+    var i, x;
+
+    var a, b;
+
+    var makeSegment = function(a, b) {
         var shape = new cp.SegmentShape(space.staticBody, a, b, 0);
         shape.setElasticity(1);
         shape.setFriction(0.9);
 
-        this.shapes.push(shape);
+        return shape;
+    }
+
+    // prune end
+    for (i=shapes.length-1; i>=0; i--) {
+        shape = shapes[i];
+        if (shape.a.x > right) {
+            space.removeShape(shape);
+        } else {
+            break;
+        }
+    }
+    shapes.splice(i + 1, shapes.length - i - 1);
+
+    // prune beginning
+    for (i=0; i<shapes.length; i++) {
+        shape = shapes[i];
+        if (shape.b.x < left) {
+            space.removeShape(shape);
+        } else {
+            break;
+        }
+    }
+    shapes.splice(0, i);
+
+    // add segments to end
+    if (shapes.length) {
+        start = shapes[shapes.length-1].b.x;
+    } else {
+        start = left - (left % step);
+    }
+
+    end = right + step;
+
+    a = v(start, this.getHeight(start));
+    for (x=start + step; x<end; x+=step) {
+        b = v(x, this.getHeight(x));
+
+        shape = makeSegment(a, b);
+
+        shapes.push(shape);
         space.addShape(shape);
 
         a = b;
+    }
+
+    // add segments to beginning
+    start = left - (left % step) - step;
+
+    if (shapes.length) {
+        end = shapes[0].a.x;
+    } else {
+        // already failed to add anything to the end
+        return;
+    }
+
+    b = v(end, this.getHeight(end));
+    for (x=end - step; x>start; x-=step) {
+        a = v(x, this.getHeight(x));
+
+        shape = makeSegment(a, b);
+
+        shapes.unshift(shape);
+        space.addShape(shape);
+
+        b = a;
     }
 };
 
