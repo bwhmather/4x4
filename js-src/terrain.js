@@ -49,10 +49,10 @@ Terrain.prototype.updateBounds = function(left, right) {
 
     var step = 20;
 
-    var a = v(0, this.getHeight(0));
-    var b = v(0,0);
-
-    for (var x=left - (left % step); x<right; x+=step) {
+    var start = left - (left % step) - step;
+    var a = v(start, this.getHeight(start));
+    var b;
+    for (var x=start + step; x<right; x+=step) {
         b = v(x, this.getHeight(x));
 
         var shape = new cp.SegmentShape(space.staticBody, a, b, 0);
