@@ -140,7 +140,7 @@ Vehicle.prototype.isCrashed = function() {
     if (this.chassis.isSleeping()) {
         // TODO alternative might be to check if the cab is touching the ground
         // vehicle is upside down
-        var angle = this.chassis.a % (2*Math.PI);
+        var angle = Math.abs(this.chassis.a % (2*Math.PI));
         if ((angle > 0.5*Math.PI) && (angle < 1.5*Math.PI)) {
             // vehicle is in contact with ground
             this.chassis.eachArbiter(function(arb) {
