@@ -5,6 +5,8 @@ var v = cp.v;
 
 
 var Terrain = function(space) {
+    this.space = space;
+
     this.components = [
         { f: 1/30, a: 10 },
         { f: 1/70, a: 30 },
@@ -19,17 +21,9 @@ var Terrain = function(space) {
     }
     this.min = -this.max;
 
-    var a = v(0, this.getHeight(0));
-    var b = v(0,0);
-    for(var x=20; x<10000; x+=20) {
-        b = v(x, this.getHeight(x));
+    this.shapes = [];
 
-        var shape = space.addShape(new cp.SegmentShape(space.staticBody, a, b, 0));
-        shape.setElasticity(1);
-        shape.setFriction(0.9);
-
-        a = b;
-    }
+    this.updateBounds(0, 10000);
 };
 
 
@@ -42,6 +36,34 @@ Terrain.prototype.getHeight = function(x) {
     }
     height = (Math.pow(height - this.min, 2) / (this.max - this.min)) + this.min;
     return height;
+};
+
+
+Terrain.prototype.updateBounds = function(left, right) {
+    var space = this.space;
+
+    for (var i = 0; i<this.shapes.length; i++) {
+        space.removeShape(this.shapes[i]);
+    }
+    this.shapes = [];
+
+    var step = 20;
+
+    var a = v(0, this.getHeight(0));
+    var b = v(0,0);
+
+    for (var x=left - (left % step); x<right; x+=step) {
+        b = v(x, this.getHeight(x));
+
+        var shape = new cp.SegmentShape(space.staticBody, a, b, 0);
+        shape.setElasticity(1);
+        shape.setFriction(0.9);
+
+        this.shapes.push(shape);
+        space.addShape(shape);
+
+        a = b;
+    }
 };
 
 
