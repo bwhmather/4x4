@@ -1,7 +1,6 @@
 html, body {
     margin: 0;
     padding: 0;
-    background: #8cbed6;
     max-height: 100%;
 }
 
@@ -10,6 +9,7 @@ canvas {
     display: block;
     width: 100%;
     height: 100%;
+    background: linear-gradient(to bottom, #5996d3, #8cbed6);
     image-rendering: optimizeSpeed;
 }
 
