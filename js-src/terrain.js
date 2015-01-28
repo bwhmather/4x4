@@ -27,12 +27,21 @@ var Terrain = function(space) {
 
 Terrain.prototype.getHeight = function(x) {
     var height = 0;
-    if (x > 200) {
-        for (var i in this.components) {
-            height += this.components[i].a * Math.sin((x-200) * this.components[i].f);
-        }
+
+    // height is built as the sum of a load of sin functions
+    for (var i in this.components) {
+        height += this.components[i].a * Math.sin(x * this.components[i].f);
     }
+
+    // flatten out valleys and sharpen peaks
     height = (Math.pow(height - this.min, 2) / (this.max - this.min)) + this.min;
+
+    // smooth out start of course
+    if (x < 600) {
+        height *= 0.5 * (1 - Math.cos(x * Math.PI / 600));
+    }
+
+
     return height;
 };
 
