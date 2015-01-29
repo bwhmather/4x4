@@ -14,7 +14,6 @@ Dust.prototype.onPreSolve = function(arb, space) {
     for (var i in arb.contacts) {
         this.particles.push({
             p: v(arb.contacts[i].p.x, arb.contacts[i].p.y),
-            radius: 10,
             age: 0
         });
     }
@@ -29,7 +28,8 @@ Dust.prototype.draw = function(ctx, box, res) {
     for (var i in this.particles) {
         var particle = this.particles[i];
         ctx.beginPath();
-        ctx.ellipse(particle.p.x, particle.p.y, particle.radius, particle.radius, 0, 0, 2*Math.PI);
+        var radius = 10 * particle.age;
+        ctx.ellipse(particle.p.x, particle.p.y, radius, radius, 0, 0, 2*Math.PI);
         ctx.fill();
     }
     ctx.restore();
@@ -38,8 +38,9 @@ Dust.prototype.draw = function(ctx, box, res) {
 
 Dust.prototype.update = function(dt) {
     for (var i in this.particles) {
-        this.particles[i].radius += 10*dt;
+        this.particles[i].age += dt;
     }
+    this.particles = this.particles.filter(function(p) {return p.age < 4;})
 };
 
 
