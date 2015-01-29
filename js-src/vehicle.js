@@ -18,6 +18,7 @@ var Wheel = function(space, spec) {
     shape.setElasticity(0);
     shape.setFriction(spec.friction);
     shape.group = 1;
+    shape.setCollisionType(2);
     space.addShape(shape);
 };
 
@@ -33,7 +34,6 @@ Wheel.prototype.draw = function(ctx, viewbox, res) {
     ctx.scale(1, -1);
     ctx.drawImage(res.get('wheel'), -r, -r, 2*r, 2*r);
     ctx.restore();
-
 };
 
 

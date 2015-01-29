@@ -22,7 +22,22 @@ var Terrain = function(space) {
     this.min = -this.max;
 
     this.shapes = [];
+
+    space.addCollisionHandler(1, 2, false, this.onPreSolve.bind(this), false, false);
+    this.dust = [];
 };
+
+Terrain.prototype.onPreSolve = function(arb, space) {
+    for (var i in arb.contacts) {
+        this.dust.push({
+            p: v(arb.contacts[i].p.x, arb.contacts[i].p.y),
+            radius: 10,
+            age: 0
+        });
+    }
+
+    return true;
+}
 
 
 Terrain.prototype.getHeight = function(x) {
@@ -62,6 +77,7 @@ Terrain.prototype.updateBounds = function(left, right) {
 
     var makeSegment = function(a, b) {
         var shape = new cp.SegmentShape(space.staticBody, a, b, 0);
+        shape.setCollisionType(1);
         shape.setElasticity(1);
         shape.setFriction(0.9);
 
@@ -202,10 +218,31 @@ Terrain.prototype.drawBorder = function(ctx, box, res) {
 };
 
 
+Terrain.prototype.drawDust = function(ctx, box, res) {
+    ctx.save()
+    ctx.fillStyle = "blue";
+    for (var i in this.dust) {
+        var dust = this.dust[i];
+        ctx.beginPath();
+        ctx.ellipse(dust.p.x, dust.p.y, dust.radius, dust.radius, 0, 0, 2*Math.PI);
+        ctx.fill();
+    }
+    ctx.restore();
+};
+
+
 Terrain.prototype.draw = function(ctx, box, res) {
     this.drawFill(ctx, box, res);
     this.drawBorder(ctx, box, res);
+    this.drawDust(ctx, box, res);
 };
+
+
+Terrain.prototype.update = function(dt) {
+    for (var i=0; i<this.dust.length; i++) {
+        this.dust[i].radius += 10*dt;
+    }
+}
 
 
 module.exports = {

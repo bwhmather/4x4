@@ -50,6 +50,7 @@ Game.prototype.update = function(dt) {
     }
 
     this.terrain.updateBounds(this.vehicle.chassis.p.x - 100, this.vehicle.chassis.p.x + 100);
+    this.terrain.update(dt);
 
     /* Run Physics */
     this.space.step(dt);
