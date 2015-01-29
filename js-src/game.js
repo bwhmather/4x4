@@ -61,6 +61,10 @@ Game.prototype.update = function(dt) {
     if (this.space.activeShapes.count) {
         this.dirty = true;
     }
+    // TODO
+    if (this.dust.particles.length) {
+        this.dirty = true;
+    }
 };
 
 
