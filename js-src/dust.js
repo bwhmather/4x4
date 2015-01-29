@@ -30,7 +30,8 @@ Dust.prototype.draw = function(ctx, box, res) {
     var sprite = res.get("dust");
     for (var i in this.particles) {
         var particle = this.particles[i];
-        var radius = 10 * particle.age;
+        var radius = 30 * particle.age;
+        ctx.globalAlpha = 1 - 0.25*particle.age;
         ctx.drawImage(sprite,
             particle.p.x - radius, particle.p.y,
             radius, radius);
