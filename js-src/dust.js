@@ -12,10 +12,13 @@ var Dust = function(space, a, b) {
 
 Dust.prototype.onPreSolve = function(arb, space) {
     for (var i in arb.contacts) {
-        this.particles.push({
-            p: v(arb.contacts[i].p.x, arb.contacts[i].p.y),
-            age: 0
-        });
+        // only emit dust once every ten or so frames
+        if (!Math.floor(Math.random()* 10)) {
+            this.particles.push({
+                p: v(arb.contacts[i].p.x, arb.contacts[i].p.y),
+                age: 0
+            });
+        }
     }
 
     return true;
@@ -24,13 +27,13 @@ Dust.prototype.onPreSolve = function(arb, space) {
 
 Dust.prototype.draw = function(ctx, box, res) {
     ctx.save()
-    ctx.fillStyle = "blue";
+    var sprite = res.get("dust");
     for (var i in this.particles) {
         var particle = this.particles[i];
-        ctx.beginPath();
         var radius = 10 * particle.age;
-        ctx.ellipse(particle.p.x, particle.p.y, radius, radius, 0, 0, 2*Math.PI);
-        ctx.fill();
+        ctx.drawImage(sprite,
+            particle.p.x - radius, particle.p.y,
+            radius, radius);
     }
     ctx.restore();
 };
