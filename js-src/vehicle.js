@@ -105,6 +105,19 @@ var Vehicle = function(space, spec, offset) {
     this.backMotor.maxForce = 0;
     space.addConstraint(this.backMotor);
 
+    // driver
+    this.driver = new cp.Body(0.1, cp.momentForBox(0.1, 2, 4));
+    this.driver.setPos(v(
+        this.chassis.p.x - 4.5 + 1,
+        this.chassis.p.y + 10 - 5
+    ));
+    space.addBody(this.driver);
+
+    space.addConstraint(new cp.PivotJoint(this.chassis, this.driver, v(-4.5, 10), v(1, -5)));
+    space.addConstraint(new cp.RotaryLimitJoint(this.chassis, this.driver, -0.9, 0.0));
+    space.addConstraint(new cp.DampedRotarySpring(this.chassis, this.driver, 0.1, 1000, 10));
+
+
     // TODO make this work for different sized wheels
     this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);
     this.differential.maxForce = spec.differential.torque;
@@ -153,9 +166,17 @@ Vehicle.prototype.isCrashed = function() {
 Vehicle.prototype.draw = function(ctx, viewbox, res) {
     var spec = this.spec;
 
+    // draw driver
     ctx.save();
-    var p = this.chassis.p;
-    ctx.translate(p.x, p.y);
+    ctx.translate(this.driver.p.x, this.driver.p.y);
+    ctx.rotate(this.driver.a);
+
+    ctx.scale(1, -1);
+    ctx.drawImage(res.get('driver'), -5, -5, 12, 12);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(this.chassis.p.x, this.chassis.p.y);
     ctx.rotate(this.chassis.a);
 
     ctx.scale(spec.image_scale, spec.image_scale);

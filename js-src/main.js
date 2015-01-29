@@ -49,6 +49,7 @@ var Application = function(canvas, config) {
     this.textureManager = new resources.TextureManager({
         'wheel': 'img/wheel.png',
         'body': 'img/body.png',
+        'driver': 'img/driver.png',
         'ground': 'img/ground.png',
         'border': 'img/border.png'
     });
