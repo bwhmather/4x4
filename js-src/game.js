@@ -7,6 +7,7 @@ var v = cp.v;
 
 var Terrain = require('./terrain.js').Terrain;
 var Vehicle = require('./vehicle.js').Vehicle;
+var Dust = require('./dust.js').Dust;
 
 var input = require('./input.js');
 var util = require('./util.js');
@@ -28,6 +29,7 @@ var Game = function(config) {
 
     this.terrain = new Terrain(space);
     this.vehicle = new Vehicle(space, config['vehicle'], v(100,100));
+    this.dust = new Dust(space, 1, 2);
 
     this.dirty = true;
 
@@ -50,7 +52,8 @@ Game.prototype.update = function(dt) {
     }
 
     this.terrain.updateBounds(this.vehicle.chassis.p.x - 100, this.vehicle.chassis.p.x + 100);
-    this.terrain.update(dt);
+
+    this.dust.update(dt);
 
     /* Run Physics */
     this.space.step(dt);
@@ -94,6 +97,7 @@ Game.prototype.draw = function(ctx, res) {
 
     this.vehicle.draw(ctx, viewbox, res);
     this.terrain.draw(ctx, viewbox, res);
+    this.dust.draw(ctx, viewbox, res);
 
     this.dirty = false;
 };
