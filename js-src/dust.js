@@ -5,12 +5,12 @@ var v = cp.v;
 
 
 var Dust = function(space, a, b) {
-    space.addCollisionHandler(a, b, false, this.onPreSolve.bind(this), false, false);
+    space.addCollisionHandler(a, b, false, false, this.onPostSolve.bind(this), false);
     this.particles = [];
 };
 
 
-Dust.prototype.onPreSolve = function(arb, space) {
+Dust.prototype.onPostSolve = function(arb, space) {
     for (var i in arb.contacts) {
         // only emit dust once every ten or so frames
         if (!Math.floor(Math.random()* 10)) {
@@ -20,8 +20,6 @@ Dust.prototype.onPreSolve = function(arb, space) {
             });
         }
     }
-
-    return true;
 };
 
 
