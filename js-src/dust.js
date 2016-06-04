@@ -12,10 +12,16 @@ var Dust = function(space, a, b) {
 
 Dust.prototype.onPostSolve = function(arb, space) {
     for (var i in arb.contacts) {
+        var contact = arb.contacts[i];
+
         // only emit dust once every ten or so frames
         if (!Math.floor(Math.random()* 10)) {
+            // Approximately 1 or 2 while driving, 20 on heavy acceleration,
+            // up to about 100 when crashing
+            var acc = contact.jtAcc;
             this.particles.push({
-                p: v(arb.contacts[i].p.x, arb.contacts[i].p.y),
+                p: v(contact.p.x, contact.p.y),
+                strength: Math.sqrt(acc),
                 age: 0
             });
         }
