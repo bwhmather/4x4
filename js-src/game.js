@@ -8,6 +8,7 @@ var v = cp.v;
 var Terrain = require('./terrain.js').Terrain;
 var Vehicle = require('./vehicle.js').Vehicle;
 var Dust = require('./dust.js').Dust;
+var Sheep = require('./sheep.js').Sheep;
 
 var input = require('./input.js');
 var util = require('./util.js');
@@ -31,6 +32,12 @@ var Game = function(config) {
     this.vehicle = new Vehicle(space, config['vehicle'], v(100,100));
     this.dust = new Dust(space, 1, 2);
 
+
+    this.sheep = [];
+    for (var i=0; i<20; i++) {
+        this.sheep.push(new Sheep(space, 200 + i, 140));
+    }
+
     this.dirty = true;
 
     input.init();
@@ -51,7 +58,7 @@ Game.prototype.update = function(dt) {
         this.crashed();
     }
 
-    this.terrain.updateBounds(this.vehicle.chassis.p.x - 100, this.vehicle.chassis.p.x + 100);
+    this.terrain.updateBounds(this.vehicle.chassis.p.x - 500, this.vehicle.chassis.p.x + 500);
 
     this.dust.update(dt);
 
@@ -101,6 +108,11 @@ Game.prototype.draw = function(ctx, res) {
 
     this.vehicle.draw(ctx, viewbox, res);
     this.terrain.draw(ctx, viewbox, res);
+
+    for (var i in this.sheep) {
+        var sheep = this.sheep[i];
+        sheep.draw(ctx, viewbox, res);
+    }
     this.dust.draw(ctx, viewbox, res);
 
     this.dirty = false;

@@ -63,6 +63,7 @@ var Vehicle = function(space, spec, offset) {
                 return c * spec.cab_outline_scale;
             }),
             v.mult(spec.cab_outline_offset, spec.body_outline_scale));
+        cabShape.setElasticity(0.2);
         cabShape.setFriction(1.2);
         cabShape.group = 1;
         space.addShape(cabShape);
@@ -116,7 +117,6 @@ var Vehicle = function(space, spec, offset) {
     space.addConstraint(new cp.PivotJoint(this.chassis, this.driver, v(-4.5, 10), v(1, -5)));
     space.addConstraint(new cp.RotaryLimitJoint(this.chassis, this.driver, -0.9, 0.0));
     space.addConstraint(new cp.DampedRotarySpring(this.chassis, this.driver, 0.1, 1000, 10));
-
 
     // TODO make this work for different sized wheels
     this.differential = new cp.SimpleMotor(this.frontWheel, this.backWheel, 0);

@@ -41,7 +41,6 @@ Terrain.prototype.getHeight = function(x) {
         height *= 0.5 * (1 - Math.cos(x * Math.PI / 600));
     }
 
-
     return height;
 };
 

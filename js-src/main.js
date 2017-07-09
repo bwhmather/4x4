@@ -52,7 +52,8 @@ var Application = function(canvas, config) {
         'driver': 'img/driver.png',
         'ground': 'img/ground.png',
         'border': 'img/border.png',
-        'dust': 'img/dust.png'
+        'dust': 'img/dust.png',
+        'sheep': 'img/sheep.png'
     });
 
     this.textureManager.onLoad = this.loaded.bind(this);
