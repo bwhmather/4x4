@@ -1,8 +1,7 @@
-"use strict";
+import * as cp from 'chipmunk-ts';
+var v = cp.v;
 
-var v = require('./lib/cp.js').v;
-
-module.exports = {
+export var data: any = {
     "gravity": 200,
     "vehicle": {
         "mass": 5,

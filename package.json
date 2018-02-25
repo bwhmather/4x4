@@ -1,0 +1,36 @@
+{
+  "name": "4x4",
+  "description": "Sidescrolling game",
+  "keywords": [],
+  "version": "0.0.1",
+  "author": "Ben Mather <bwhmather@bwhmather.com> (bwhmather.com)",
+  "homepage": "https://github.com/bwhmather/4x4",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bwhmather/4x4.git"
+  },
+  "dependencies": {
+    "chipmunk-ts": "^0.0.3",
+    "npm-check-updates": "^2.14.0",
+    "typestate": "^1.0.5"
+  },
+  "devDependencies": {
+    "rollup": "^0.56.3",
+    "rollup-plugin-commonjs": "^8.3.0",
+    "rollup-plugin-node-resolve": "^3.0.3",
+    "rollup-plugin-typescript2": "^0.11.1",
+    "rollup-plugin-uglify": "^3.0.0",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1",
+    "typescript-formatter": "^7.1.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "tslint": "tslint src/*.ts src/*/*.ts"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.mjs",
+    "dist/*.d.ts"
+  ]
+}

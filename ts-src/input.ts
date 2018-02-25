@@ -1,10 +1,8 @@
-"use strict";
-
-var rightPressed = false;
-var leftPressed = false;
+export var rightPressed: boolean = false;
+export var leftPressed: boolean = false;
 
 
-var onKeyDown = function(e) {
+function onKeyDown(e) {
     if (e.keyCode === 39) {
         rightPressed = true;
         return false;
@@ -12,9 +10,9 @@ var onKeyDown = function(e) {
         leftPressed = true;
         return false;
     }
-};
+}
 
-var onKeyUp = function(e) {
+function onKeyUp(e) {
     if (e.keyCode === 39) {
         rightPressed = false;
         return false;
@@ -22,36 +20,36 @@ var onKeyUp = function(e) {
         leftPressed = false;
         return false;
     }
-};
+}
 
 
-var leftPedalDown = function(e) {
+function leftPedalDown(e) {
     leftPressed = true;
     e.preventDefault();
     return false;
-};
+}
 
-var leftPedalUp = function(e) {
+function leftPedalUp(e) {
     leftPressed = false;
     e.preventDefault();
     return false;
-};
+}
 
 
-var rightPedalDown = function(e) {
+function rightPedalDown(e) {
     rightPressed = true;
     e.preventDefault();
     return false;
-};
+}
 
-var rightPedalUp = function(e) {
+function rightPedalUp(e) {
     rightPressed = false;
     e.preventDefault();
     return false;
-};
+}
 
 
-var init = function() {
+export function init() {
     // Keyboard
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
@@ -72,11 +70,4 @@ var init = function() {
         rightPedal.addEventListener('touchleave', rightPedalUp);
         rightPedal.addEventListener('touchend', rightPedalUp);
     }
-};
-
-
-module.exports = {
-    'init': init,
-    'leftPressed': function() { return leftPressed; },
-    'rightPressed': function() { return rightPressed; },
 };

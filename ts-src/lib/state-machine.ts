@@ -7,7 +7,7 @@
 
 */
 
-var StateMachine = {
+export StateMachine = {
 
   //---------------------------------------------------------------------------
 
@@ -185,5 +185,3 @@ var StateMachine = {
     };
   }
 }; // StateMachine
-
-module.exports = StateMachine; 
